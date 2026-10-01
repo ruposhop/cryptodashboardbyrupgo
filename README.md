@@ -107,6 +107,10 @@ npm run dev
 
 Stack: Next.js 16, TypeScript, Tailwind CSS v4, Recharts, Supabase, Vercel, Resend. Si desarrollas con Claude Code, lee [`CLAUDE.md`](CLAUDE.md).
 
+## 📄 Licencia
+
+[MIT](LICENSE): puedes usarlo, modificarlo y compartirlo libremente, manteniendo el aviso de copyright.
+
 ---
 
 ¿Te ha servido? Dale una ⭐ al repo y, si quieres aprender a crear proyectos así con IA, te espero en **[rupgo.com](https://rupgo.com)**. — *Rubén Benarroch*
