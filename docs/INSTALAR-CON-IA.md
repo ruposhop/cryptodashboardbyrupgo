@@ -51,6 +51,7 @@ Guíale para crearlas (las copiará directamente a Vercel en el paso 4):
 | `ALLOWED_EMAIL` | Su email, el único que podrá entrar |
 | `NEXT_PUBLIC_APP_NAME` | Nombre visible (opcional) |
 | `NEXT_PUBLIC_REPO_URL` | Enlace al código en la página de inicio (opcional) |
+| `CURRENCY` | `EUR` o `USD` (opcional). Si no se pone, se usa la moneda de su cuenta de Coinbase, detectada en la primera sincronización. Elígela antes de sincronizar: cambiarla después obliga a reimportar el historial |
 | `NEXT_PUBLIC_SUPABASE_URL` / `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` / `SUPABASE_SECRET_KEY` | Supabase |
 | `RESEND_API_KEY` / `EMAIL_FROM` | Emails |
 | `COINBASE_API_KEY_NAME` / `COINBASE_API_PRIVATE_KEY` | API key ID y Secret de Coinbase |
@@ -67,7 +68,7 @@ Guíale para crearlas (las copiará directamente a Vercel en el paso 4):
 3. Pulsar **↻ Sincronizar**. La primera vez importa todo el historial y reconstruye el gráfico (1-2 minutos).
 4. Revisa con él el Resumen. Si algo no cuadra, mira "Problemas frecuentes".
 
-Opcional: sincronización cada hora con GitHub Actions (README → "Sincronizar cada hora") y dominio propio en Vercel.
+Opcional: sincronización cada hora con GitHub Actions (README → "Sincronizar cada hora" / "Hourly sync") y dominio propio en Vercel.
 
 ## 6. Actualizar a una versión nueva
 

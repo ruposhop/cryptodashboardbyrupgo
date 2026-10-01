@@ -1,5 +1,6 @@
 import "server-only";
 import { coinbaseGet } from "@/lib/coinbase";
+import { rememberDetectedCurrency } from "@/lib/currency";
 import { createAdminClient } from "@/lib/supabase/admin";
 import {
   replaceBalances,
@@ -67,10 +68,10 @@ async function getAll<T>(firstPath: string) {
   return all;
 }
 
-async function eurRates() {
-  // Endpoint público: cuántas unidades de cada moneda vale 1 EUR.
+async function rates(currency: string) {
+  // Endpoint público: cuántas unidades de cada moneda vale 1 EUR (o 1 USD…).
   const res = await fetch(
-    "https://api.coinbase.com/v2/exchange-rates?currency=EUR",
+    `https://api.coinbase.com/v2/exchange-rates?currency=${currency}`,
     { cache: "no-store" },
   );
   const json = (await res.json()) as {
@@ -101,10 +102,24 @@ export async function syncCoinbase() {
   const sourceId = await coinbaseSourceId();
 
   return withSyncRun(db, sourceId, async () => {
-    const [accounts, rates] = await Promise.all([
-      getAll<Account>("/v2/accounts?limit=100"),
-      eurRates(),
-    ]);
+    const accounts = await getAll<Account>("/v2/accounts?limit=100");
+    const txsByAccount = new Map<string, Tx[]>();
+    for (const a of accounts) {
+      txsByAccount.set(a.id, await getAll<Tx>(`/v2/accounts/${a.id}/transactions?limit=100`));
+    }
+
+    // Moneda en la que Coinbase valora tus movimientos (la de tu cuenta).
+    const seen = new Map<string, number>();
+    for (const txs of txsByAccount.values()) {
+      for (const tx of txs) {
+        const c = tx.native_amount?.currency;
+        if (c) seen.set(c, (seen.get(c) ?? 0) + 1);
+      }
+    }
+    const detected = [...seen].sort((x, y) => y[1] - x[1])[0]?.[0] ?? null;
+    const currency = await rememberDetectedCurrency(detected);
+    const fx = await rates(currency);
+
     const code = (a: Account) =>
       typeof a.currency === "string" ? a.currency : a.currency.code;
 
@@ -129,13 +144,13 @@ export async function syncCoinbase() {
         .map(([symbol, amount]) => ({
           asset_id: assetId.get(symbol)!,
           amount,
-          value_eur: rates[symbol] ? amount / Number(rates[symbol]) : null,
+          value_eur: fx[symbol] ? amount / Number(fx[symbol]) : null,
         })),
     );
 
     let transactions = 0;
     for (const a of accounts) {
-      const txs = await getAll<Tx>(`/v2/accounts/${a.id}/transactions?limit=100`);
+      const txs = txsByAccount.get(a.id) ?? [];
       const rows = txs
         .filter((tx) => tx.status === "completed")
         .map((tx) => ({
@@ -146,7 +161,7 @@ export async function syncCoinbase() {
           asset_id: assetId.get(code(a)),
           amount: Number(tx.amount.amount),
           value_eur_at_time:
-            tx.native_amount?.currency === "EUR"
+            tx.native_amount && tx.native_amount.currency === currency
               ? Math.abs(Number(tx.native_amount.amount))
               : null,
           tx_hash: tx.network?.hash ?? null,

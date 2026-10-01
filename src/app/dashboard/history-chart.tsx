@@ -11,7 +11,7 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
-import { formatEur, formatEurSigned, pnlClass } from "@/lib/format";
+import { formatMoney, formatMoneySigned, pnlClass, setCurrency } from "@/lib/format";
 
 export type Point = { date: string; value: number; invested: number };
 
@@ -31,7 +31,8 @@ const compact = new Intl.NumberFormat("es-ES", {
   maximumFractionDigits: 1,
 });
 
-export function HistoryChart({ points }: { points: Point[] }) {
+export function HistoryChart({ points, currency }: { points: Point[]; currency: string }) {
+  setCurrency(currency);
   const [range, setRange] = useState<(typeof RANGES)[number]["key"]>("1a");
 
   const data = useMemo(() => {
@@ -56,7 +57,7 @@ export function HistoryChart({ points }: { points: Point[] }) {
         <p className="text-sm text-muted">
           Rentabilidad en el periodo:{" "}
           <span className={`font-mono tabular-nums ${pnlClass(change)}`}>
-            {formatEurSigned(change)}
+            {formatMoneySigned(change)}
           </span>
         </p>
         <div role="group" aria-label="Periodo" className="flex rounded-lg border border-border p-0.5">
@@ -111,12 +112,12 @@ export function HistoryChart({ points }: { points: Point[] }) {
                 return (
                   <div className="rounded-lg border border-border bg-surface px-3 py-2 text-xs shadow-lg">
                     <p className="text-muted">{longDate.format(new Date(p.date))}</p>
-                    <p className="mt-1 font-mono tabular-nums">Valor {formatEur(p.value)}</p>
+                    <p className="mt-1 font-mono tabular-nums">Valor {formatMoney(p.value)}</p>
                     <p className="font-mono tabular-nums text-muted">
-                      Metido {formatEur(p.invested)}
+                      Metido {formatMoney(p.invested)}
                     </p>
                     <p className={`font-mono tabular-nums ${pnlClass(p.value - p.invested)}`}>
-                      Rentabilidad {formatEurSigned(p.value - p.invested)}
+                      Rentabilidad {formatMoneySigned(p.value - p.invested)}
                     </p>
                   </div>
                 );

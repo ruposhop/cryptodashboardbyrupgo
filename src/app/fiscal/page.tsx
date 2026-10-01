@@ -3,8 +3,8 @@ import { AppHeader } from "@/components/app-header";
 import { bySymbol, getFiscalYears } from "@/lib/fiscal";
 import {
   formatAmount,
-  formatEur,
-  formatEurSigned,
+  formatMoney,
+  formatMoneySigned,
   pnlClass,
 } from "@/lib/format";
 import { requireOwner } from "@/lib/session";
@@ -67,24 +67,24 @@ export default async function Fiscal({ searchParams }: PageProps<"/fiscal">) {
 
           <dl className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-4">
             <Kpi label="Ganancias">
-              <span className={pnlClass(selected.gains)}>{formatEurSigned(selected.gains)}</span>
+              <span className={pnlClass(selected.gains)}>{formatMoneySigned(selected.gains)}</span>
             </Kpi>
             <Kpi label="Pérdidas">
-              <span className={pnlClass(selected.losses)}>{formatEurSigned(selected.losses)}</span>
+              <span className={pnlClass(selected.losses)}>{formatMoneySigned(selected.losses)}</span>
             </Kpi>
             <Kpi label="Resultado neto">
-              <span className={pnlClass(selected.net)}>{formatEurSigned(selected.net)}</span>
+              <span className={pnlClass(selected.net)}>{formatMoneySigned(selected.net)}</span>
             </Kpi>
             <Kpi label="Recompensas staking">
-              {formatEur(selected.rewardsEur)}
+              {formatMoney(selected.rewardsEur)}
               <span className="block text-xs text-muted">{selected.rewardsCount} pagos</span>
             </Kpi>
           </dl>
 
           <div className="mt-4 space-y-1 text-xs leading-5 text-muted">
             <p>
-              Incluye ventas y permutas (cambiar una cripto por otra también tributa en
-              España). Las recompensas de staking se muestran aparte, a su valor de
+              Incluye ventas y permutas (en muchos países, como España o EE. UU., cambiar
+              una cripto por otra también tributa). Las recompensas de staking se muestran aparte, a su valor de
               mercado al recibirlas.
             </p>
             {selected.excludedSends > 0 && (
@@ -129,15 +129,15 @@ export default async function Fiscal({ searchParams }: PageProps<"/fiscal">) {
                         <span className="ml-2 text-xs text-muted">{s.count} op.</span>
                       </td>
                       <td className="hidden px-4 py-3 text-right font-mono tabular-nums sm:table-cell">
-                        {formatEur(s.proceeds)}
+                        {formatMoney(s.proceeds)}
                       </td>
                       <td className="hidden px-4 py-3 text-right font-mono tabular-nums sm:table-cell">
-                        {formatEur(s.cost)}
+                        {formatMoney(s.cost)}
                       </td>
                       <td
                         className={`px-4 py-3 text-right font-mono tabular-nums ${pnlClass(s.proceeds - s.cost)}`}
                       >
-                        {formatEurSigned(s.proceeds - s.cost)}
+                        {formatMoneySigned(s.proceeds - s.cost)}
                       </td>
                     </tr>
                   ))}
@@ -182,16 +182,16 @@ export default async function Fiscal({ searchParams }: PageProps<"/fiscal">) {
                         {formatAmount(d.amount)}
                       </td>
                       <td className="hidden px-4 py-3 text-right font-mono tabular-nums sm:table-cell">
-                        {formatEur(d.proceedsEur)}
+                        {formatMoney(d.proceedsEur)}
                       </td>
                       <td className="hidden px-4 py-3 text-right font-mono tabular-nums sm:table-cell">
-                        {formatEur(d.costEur)}
+                        {formatMoney(d.costEur)}
                         {d.unmatched && <span className="text-loss"> *</span>}
                       </td>
                       <td
                         className={`px-4 py-3 text-right font-mono tabular-nums ${pnlClass(d.proceedsEur - d.costEur)}`}
                       >
-                        {formatEurSigned(d.proceedsEur - d.costEur)}
+                        {formatMoneySigned(d.proceedsEur - d.costEur)}
                       </td>
                     </tr>
                   ))}

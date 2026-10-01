@@ -1,4 +1,5 @@
 import "server-only";
+import { FIAT } from "@/lib/fifo";
 import { createClient } from "@/lib/supabase/server";
 
 export const TYPE_LABEL: Record<string, string> = {
@@ -96,5 +97,5 @@ export async function listAssetSymbols() {
     .select("symbol, transactions!inner(id)")
     .limit(1, { referencedTable: "transactions" })
     .order("symbol");
-  return (data ?? []).map((a) => a.symbol as string).filter((s) => s !== "EUR");
+  return (data ?? []).map((a) => a.symbol as string).filter((s) => !FIAT.has(s));
 }

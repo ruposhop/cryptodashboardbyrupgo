@@ -1,4 +1,5 @@
 import "server-only";
+import { getCurrency } from "@/lib/currency";
 import { createAdminClient } from "@/lib/supabase/admin";
 import {
   replaceBalances,
@@ -138,18 +139,19 @@ export async function syncWallet(address: string) {
   const db = createAdminClient();
   const base = `${API}/wallets/${address}`;
   const usage: Usage = { calls: 0 };
+  const currency = await getCurrency();
 
   return withSyncRun(
     db,
     null,
     async () => {
       const positions = await getAll<Position>(
-        `${base}/positions/?filter[positions]=only_simple&filter[trash]=only_non_trash&currency=eur`,
+        `${base}/positions/?filter[positions]=only_simple&filter[trash]=only_non_trash&currency=${currency.toLowerCase()}`,
         usage,
       );
       const since = await lastTxTime(address);
       const txs = await getAll<Tx>(
-        `${base}/transactions/?filter[trash]=only_non_trash&currency=eur&page[size]=100` +
+        `${base}/transactions/?filter[trash]=only_non_trash&currency=${currency.toLowerCase()}&page[size]=100` +
           (since ? `&filter[min_mined_at]=${since}` : ""),
         usage,
       );

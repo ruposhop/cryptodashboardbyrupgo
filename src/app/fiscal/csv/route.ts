@@ -1,4 +1,5 @@
 import { isAllowedEmail } from "@/lib/auth";
+import { getCurrency } from "@/lib/currency";
 import { getFiscalYears } from "@/lib/fiscal";
 import { createClient } from "@/lib/supabase/server";
 
@@ -18,8 +19,9 @@ export async function GET(request: Request) {
 
   // Formato español: separador ";" y coma decimal, para abrirlo en Excel.
   const num = (n: number, digits = 2) => n.toFixed(digits).replace(".", ",");
+  const cur = (await getCurrency()).toLowerCase();
   const lines = [
-    "fecha;activo;tipo;cantidad;valor_transmision_eur;valor_adquisicion_eur;resultado_eur;coste_incompleto",
+    `fecha;activo;tipo;cantidad;valor_transmision_${cur};valor_adquisicion_${cur};resultado_${cur};coste_incompleto`,
     ...fy.disposals.map((d) =>
       [
         d.occurredAt.slice(0, 10),

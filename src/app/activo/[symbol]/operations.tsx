@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { formatAmount, formatEur, formatPrice } from "@/lib/format";
+import { formatAmount, formatMoney, formatPrice, setCurrency } from "@/lib/format";
 
 export type Operation = {
   id: string;
@@ -51,7 +51,14 @@ const dateTime = new Intl.DateTimeFormat("es-ES", {
 });
 
 // Todos los movimientos de una moneda, filtrables y paginados en el navegador.
-export function Operations({ operations }: { operations: Operation[] }) {
+export function Operations({
+  operations,
+  currency,
+}: {
+  operations: Operation[];
+  currency: string;
+}) {
+  setCurrency(currency);
   const [filter, setFilter] = useState<(typeof FILTERS)[number]["key"]>("todas");
   const [shown, setShown] = useState(PAGE);
 
@@ -130,7 +137,7 @@ export function Operations({ operations }: { operations: Operation[] }) {
                   {o.unitPrice != null ? formatPrice(o.unitPrice) : "—"}
                 </td>
                 <td className="px-4 py-3 text-right font-mono tabular-nums">
-                  {o.valueEur != null ? formatEur(o.valueEur) : "—"}
+                  {o.valueEur != null ? formatMoney(o.valueEur) : "—"}
                 </td>
               </tr>
             ))}

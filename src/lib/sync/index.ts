@@ -5,6 +5,7 @@ import { createAdminClient } from "@/lib/supabase/admin";
 import { syncCoinbase } from "./coinbase";
 import { syncWallet } from "./wallet";
 import { ensureOwner } from "@/lib/owner";
+import { loadCurrency } from "@/lib/currency";
 
 // Zerion (plan gratuito): ~2000 peticiones/mes. Cada sincronización de una
 // wallet gasta 2. Con el cron cada 6 h son ~240/mes por wallet; el botón
@@ -42,6 +43,7 @@ async function walletIsDue(trigger: "cron" | "manual") {
 export async function syncAll(trigger: "cron" | "manual" = "cron") {
   const db = createAdminClient();
   await ensureOwner();
+  await loadCurrency();
   const { data: wallets } = await db
     .from("sources")
     .select("address")
@@ -61,6 +63,9 @@ export async function syncAll(trigger: "cron" | "manual" = "cron") {
       : [],
     walletSkipped: !walletDue,
   };
+
+  // La primera sincronización de Coinbase puede haber detectado la moneda.
+  await loadCurrency();
 
   const fresh = results.wallets.flatMap((w) => (w.ok ? w.result.fresh : []));
   if (fresh.length) await attempt("aviso wallet", () => notifyWalletMovements(fresh));

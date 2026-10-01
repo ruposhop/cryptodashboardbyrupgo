@@ -26,7 +26,7 @@ Si existe `CLAUDE.local.md` (no se sube a GitHub), tiene las notas privadas de e
 
 ## Estructura
 
-- `README.md` — guía de instalación para cualquier persona
+- `README.md` (inglés) y `README.es.md` (español) — guía de instalación para cualquier persona. Mantén los dos iguales
 - `docs/MASTERPLAN.md` — qué hace el producto
 - `src/app/` — rutas. `/` es **solo el login** (magic link o código por email); no hay contenido público. App: `/dashboard`, `/activo` y `/activo/[symbol]`, `/cambios`, `/movimientos`, `/fiscal`, `/ajustes`. Cada página privada llama a `requireOwner()` (`src/lib/session.ts`) además del proxy
 - `src/proxy.ts` — protege todas las rutas y `/api/*`. Públicas solo `/`, `/auth/confirm`, manifest e iconos
@@ -42,7 +42,7 @@ Si existe `CLAUDE.local.md` (no se sube a GitHub), tiene las notas privadas de e
 
 ## Convenciones
 
-- Interfaz y textos en español. Importes en EUR con formato `es-ES`.
+- Interfaz y textos en español. Importes en la moneda de la instalación (`src/lib/currency.ts`: la de Coinbase o `CURRENCY`) con formato `es-ES`: usa `formatMoney`/`formatPrice`, nunca "€" ni "euros" a mano (`currencySymbol()`, `currencyName()`). Las columnas `*_eur` de la base de datos guardan esa moneda.
 - Tema oscuro único. Cifras en tipografía monoespaciada (`font-mono tabular-nums`). Verde y rojo **solo** para ganancias y pérdidas (`text-gain` / `text-loss`).
 - Mobile-first. Server Components por defecto; `"use client"` solo donde haya interacción.
 - Todo el sitio es `noindex`.

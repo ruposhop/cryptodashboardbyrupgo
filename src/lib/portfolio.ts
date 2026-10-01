@@ -1,5 +1,5 @@
 import "server-only";
-import { computeFifo, underlying, type FifoAsset } from "@/lib/fifo";
+import { computeFifo, FIAT, underlying, type FifoAsset } from "@/lib/fifo";
 import { createClient } from "@/lib/supabase/server";
 import { xirr } from "@/lib/xirr";
 
@@ -171,7 +171,7 @@ export async function getPortfolio() {
   };
   for (const t of txs) {
     if (t.is_internal_transfer || t.type === "interno") continue;
-    if (["EUR", "USD"].includes(one(t.assets as Joined<{ symbol: string }>).symbol)) continue;
+    if (FIAT.has(one(t.assets as Joined<{ symbol: string }>).symbol)) continue;
     const value = Number(t.value_eur_at_time ?? 0);
     const amount = Number(t.amount);
     let cash = 0;

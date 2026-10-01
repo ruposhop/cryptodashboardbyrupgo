@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { AppHeader } from "@/components/app-header";
-import { formatAmount, formatDate, formatEur } from "@/lib/format";
+import { formatAmount, formatDate, formatMoney } from "@/lib/format";
 import {
   explorerUrl,
   listAssetSymbols,
@@ -146,7 +146,7 @@ export default async function Movimientos({ searchParams }: PageProps<"/movimien
                   {formatAmount(m.amount)}
                 </p>
                 <p className="text-xs text-muted">
-                  {m.valueEur != null ? formatEur(m.valueEur) : "—"}
+                  {m.valueEur != null ? formatMoney(m.valueEur) : "—"}
                 </p>
               </div>
             </li>
