@@ -61,6 +61,8 @@ Solo dos ramas fijas; nunca crees otras por tu cuenta.
 
 ## Seguridad
 
+- **Este repo es público** (github.com/ruposhop/cryptodashboardbyrupgo) y otras personas lo usan con sus propios datos. Nunca subas nada personal: emails, direcciones de wallet, importes, IDs de proyectos, dominios ni notas privadas. Antes de cada commit, revisa el diff con eso en mente. Las mejoras se publican aquí y cada usuario las recibe con "Sync fork".
+
 - La app nunca puede mover fondos. Nunca se piden ni se guardan seed phrases ni claves privadas.
 - La API key de Coinbase solo tiene permiso `view`, vive en variables de entorno y solo se usa en el servidor.
 - Nunca pedir ni aceptar claves, tokens o contraseñas por el chat: se crean en Vercel y se traen con `vercel env pull`. Nada de secretos en código ni en archivos versionados.
