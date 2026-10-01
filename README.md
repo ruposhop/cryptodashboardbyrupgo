@@ -49,7 +49,6 @@ En GitHub pulsa **Fork** (o *Use this template*). Tendrás tu copia en tu cuenta
 | `COINBASE_API_PRIVATE_KEY` | El *Secret* de Coinbase |
 | `ZERION_API_KEY` | Tu key de Zerion |
 | `CRON_SECRET` | Un texto largo aleatorio (por ejemplo, el resultado de `openssl rand -hex 32`) |
-| `SYNC_CRON` | `0 6 * * *` (una vez al día; plan gratuito). En Vercel Pro: `0 * * * *` |
 
 Las claves secretas (Supabase secret, Resend, Coinbase, Zerion, `CRON_SECRET`) márcalas como **Sensitive**.
 
@@ -62,6 +61,16 @@ Las claves secretas (Supabase secret, Resend, Coinbase, Zerion, `CRON_SECRET`) m
 3. Pulsa **Sincronizar** (↻). La primera vez importa todo el historial de Coinbase y la wallet y reconstruye el gráfico día a día desde tu primer movimiento (puede tardar un par de minutos). Después se mantiene solo.
 
 En el móvil puedes instalarla: en Safari, **Compartir → Añadir a pantalla de inicio**. En la app instalada entra con el **código** del email (la app y Safari no comparten sesión).
+
+## Sincronizar cada hora (opcional, gratis)
+
+Vercel sincroniza sola una vez al día (06:00 UTC) y siempre puedes pulsar ↻. Si quieres datos cada hora, el repo trae un workflow de GitHub Actions que lo hace gratis:
+
+1. En tu fork: **Actions** → activa los workflows (en los forks vienen apagados).
+2. **Settings → Secrets and variables → Actions → New repository secret**, crea:
+   - `SYNC_URL`: `https://TU-DOMINIO/api/cron/sync`. Tiene que ser una URL accesible: tu dominio propio, o tu `.vercel.app` si tienes desactivada la Deployment Protection en producción.
+   - `CRON_SECRET`: el mismo valor que pusiste en Vercel.
+3. Listo: se ejecuta a los 5 minutos de cada hora. Puedes probarlo en **Actions → Sincronización cada hora → Run workflow**.
 
 ## Actualizar a nuevas versiones
 

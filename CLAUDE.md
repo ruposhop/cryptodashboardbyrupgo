@@ -13,7 +13,7 @@ Si existe `CLAUDE.local.md` (no se sube a GitHub), tiene las notas privadas de e
 ## Stack
 
 - Next.js 16 (App Router, Server Components, Route Handlers) · TypeScript · Tailwind CSS v4 · Recharts
-- Supabase (Postgres + Auth + RLS) · Vercel (hosting + Cron, configurado en `vercel.ts`) · Resend (emails)
+- Supabase (Postgres + Auth + RLS) · Vercel (hosting + Cron diario en `vercel.json`, lo máximo del plan gratuito) · GitHub Actions opcional cada hora (`.github/workflows/sync.yml`) · Resend (emails)
 - Datos: Coinbase API (key de solo lectura), Zerion (wallet), API pública de Coinbase Exchange (precios históricos)
 
 ## Comandos

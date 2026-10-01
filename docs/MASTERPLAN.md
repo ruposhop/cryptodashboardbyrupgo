@@ -45,6 +45,6 @@ Una persona por instalación, que acumula a largo plazo como un fondo personal: 
 
 ## 5. Arquitectura
 
-- Next.js en Vercel, cron configurable con `SYNC_CRON`.
+- Next.js en Vercel: cron diario de Vercel y, opcional, cada hora con GitHub Actions.
 - Supabase: tablas `sources`, `assets`, `balances`, `transactions`, `portfolio_snapshots`, `sync_runs`, `price_history`, `price_alerts`, `app_settings`, `magic_link_sends`. RLS en todas; solo el dueño lee.
 - Coinbase (API key `view`), Zerion (wallet), Coinbase Exchange público (precios históricos), Resend (emails).
