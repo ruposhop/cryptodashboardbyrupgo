@@ -6,6 +6,8 @@ Dashboard privado y de **solo lectura** para seguir una cartera crypto personal:
 
 Lo vemos como un **fondo personal**: la métrica principal es la rentabilidad (valor hoy − dinero metido neto, y TIR anual). "Realizado / no realizado" (FIFO) es solo para la parte fiscal.
 
+**¿La persona quiere instalar o actualizar su dashboard?** Sigue `docs/INSTALAR-CON-IA.md` paso a paso.
+
 **Producto: `docs/MASTERPLAN.md`.** Si algo no está ahí, no se construye sin preguntar.
 
 Si existe `CLAUDE.local.md` (no se sube a GitHub), tiene las notas privadas de esta instalación: léelas, pero **nunca copies nada de ahí ni de `private/` a archivos versionados**.

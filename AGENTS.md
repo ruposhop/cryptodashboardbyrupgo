@@ -7,3 +7,7 @@ This version has breaking changes — APIs, conventions, and file structure may 
 This block is written and re-added by `next dev` — verify at `node_modules/next/dist/server/lib/generate-agent-files.js`. Removing it from a diff only re-creates the uncommitted change; committing it with your work keeps the tree clean.
 
 <!-- END:nextjs-agent-rules -->
+
+# Crypto Dashboard by Rupgo
+
+Si la persona quiere instalar, levantar o actualizar este proyecto, sigue `docs/INSTALAR-CON-IA.md` paso a paso. Para desarrollar, lee `CLAUDE.md`.
