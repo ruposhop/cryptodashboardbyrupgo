@@ -29,6 +29,7 @@ Una persona por instalación, que acumula a largo plazo como un fondo personal: 
 - **Acceso privado:** login por enlace o código de un solo uso enviado al email del dueño (`ALLOWED_EMAIL`). Cualquier otro email no recibe nada.
 - **Sincronización:** Vercel Cron + botón "Sincronizar ahora". Coinbase (cuentas, saldos, movimientos) y wallets (saldos y movimientos por red). Todo se guarda en Supabase; el dashboard lee de la base de datos.
 - **Resumen:** valor total, variación 24h/7d/30d, dinero metido, rentabilidad (€, %, TIR anual), gráfico de evolución desde el primer movimiento, reparto por moneda y por ubicación, posiciones.
+- **Dinero metido y comisiones:** de dónde sale "dinero metido" (compras, entradas y salidas, para cuadrarlo con el banco) y cuánto se ha ido en comisiones: comisión de compra declarada, margen en el precio de compra (estimado con el cierre diario), cambios entre monedas y gas de la wallet. Ya están restadas en la rentabilidad; aquí solo se separan.
 - **Para estar en positivo:** precio de equilibrio por moneda y precio necesario para que el fondo vuelva a valer lo metido.
 - **Monedas:** resultado total por moneda (lo sacado + lo que queda − lo metido), gráfico de precio con las operaciones y todos sus movimientos.
 - **Cambios:** cada cambio entre monedas (qué diste, qué recibiste, comisión) y cómo le ha ido hasta hoy frente a no haberlo hecho.
