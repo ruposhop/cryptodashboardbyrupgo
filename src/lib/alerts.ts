@@ -94,6 +94,40 @@ export async function notifyWalletMovements(fresh: Fresh[]) {
   );
 }
 
+// Si la sincronización falla, un email como mucho cada 24 h (se guarda la
+// fecha del último aviso en app_settings) para no llenar el buzón cada hora.
+const SYNC_FAILURE_KEY = "sync_failure_notified_at";
+const SYNC_FAILURE_EVERY_MS = 24 * 3600 * 1000;
+
+export async function notifySyncFailure(failures: { name: string; error: string }[]) {
+  if (failures.length === 0) return;
+  const db = createAdminClient();
+  const { data } = await db
+    .from("app_settings")
+    .select("value")
+    .eq("key", SYNC_FAILURE_KEY)
+    .maybeSingle();
+  if (data && Date.now() - Date.parse(data.value) < SYNC_FAILURE_EVERY_MS) return;
+
+  await db
+    .from("app_settings")
+    .upsert({ key: SYNC_FAILURE_KEY, value: new Date().toISOString() });
+  const rows = failures
+    .map(
+      (f) =>
+        `<li style="margin:0 0 8px;"><strong>${escapeHtml(f.name)}</strong><br><span style="color:#8b919c;font-size:13px;">${escapeHtml(f.error.slice(0, 300))}</span></li>`,
+    )
+    .join("");
+  await sendEmail(
+    process.env.ALLOWED_EMAIL!,
+    "La sincronización está fallando",
+    emailTemplate(
+      "La sincronización está fallando",
+      `<p style="margin:0 0 12px;">Los datos del dashboard pueden no estar al día.</p><ul style="margin:0 0 12px;padding-left:18px;">${rows}</ul><p style="margin:0 0 12px;color:#8b919c;font-size:13px;">No volverás a recibir este aviso en 24 h aunque siga fallando.</p>${emailButton(`${SITE}/ajustes`, "Ver el estado")}`,
+    ),
+  );
+}
+
 function escapeHtml(s: string) {
   return s.replace(/[&<>"']/g, (c) => `&#${c.charCodeAt(0)};`);
 }

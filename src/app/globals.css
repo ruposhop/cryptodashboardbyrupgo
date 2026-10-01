@@ -9,6 +9,7 @@
   --muted: #8b919c;
   --gain: #2fbf71;
   --loss: #f0555a;
+  --warn: #e0a43a;
 }
 
 @theme inline {
@@ -19,6 +20,7 @@
   --color-muted: var(--muted);
   --color-gain: var(--gain);
   --color-loss: var(--loss);
+  --color-warn: var(--warn);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }

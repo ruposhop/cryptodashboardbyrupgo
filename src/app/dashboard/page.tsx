@@ -25,6 +25,12 @@ export default async function Dashboard() {
   ]);
   const pnlPct = p.contributed ? p.pnl / p.contributed : null;
 
+  const syncWarning = p.syncFailing
+    ? "La última sincronización falló: puede que falten datos recientes."
+    : p.syncStale
+      ? "Hace más de un día que no se sincroniza."
+      : null;
+
   // Variación del mercado (MASTERPLAN §3.4): cambio del P&L desde hace N días,
   // así una compra nueva no cuenta como "subida".
   const today = new Date().toLocaleDateString("sv-SE", { timeZone: "Europe/Madrid" });
@@ -68,6 +74,15 @@ export default async function Dashboard() {
           {" · "}
           {p.lastSync ? `Actualizado ${formatDate(p.lastSync)}` : "Sin sincronizar"}
         </p>
+        {syncWarning && (
+          <p role="status" className="mt-1 text-xs text-warn">
+            {syncWarning} Detalle en{" "}
+            <Link href="/ajustes" className="underline underline-offset-2">
+              Ajustes
+            </Link>
+            .
+          </p>
+        )}
         <p className="mt-1 text-xs text-muted">
           Coinbase cada hora · Wallet cada 6 h · Zerion: {zerionCalls} / 2000
           peticiones este mes

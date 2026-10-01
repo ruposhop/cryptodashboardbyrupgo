@@ -8,7 +8,7 @@
 - 🔁 **¿Me han salido bien los cambios entre monedas?** Cada cambio comparado con lo que tendrías si no lo hubieras hecho, y cuánto se fue en comisiones.
 - 🎯 **¿A qué precio tiene que estar cada moneda** para volver a positivo?
 - 🧾 **Informe fiscal** por FIFO y por año, con CSV para tu gestor.
-- 🔔 **Alertas por email** de precio y de movimientos en tu wallet.
+- 🔔 **Alertas por email** de precio, de movimientos en tu wallet y si la sincronización falla.
 - 🙈 Modo privacidad, app instalable en el móvil y tema oscuro.
 
 > **Solo lectura y privado.** Nunca puede mover fondos, no pide claves privadas ni frases semilla, y cada persona lo instala con **sus propias** cuentas (Supabase, Vercel, Coinbase…). Nadie más ve tus datos, tampoco el autor de este repo.
@@ -50,6 +50,7 @@ Cuentas gratuitas en [GitHub](https://github.com), [Vercel](https://vercel.com) 
 |---|---|
 | `ALLOWED_EMAIL` | Tu email (el único que podrá entrar) |
 | `NEXT_PUBLIC_APP_NAME` | El nombre que quieras ver (opcional) |
+| `NEXT_PUBLIC_REPO_URL` | Enlace al código en la página de inicio (opcional; por defecto, este repo) |
 | `NEXT_PUBLIC_SUPABASE_URL` | URL de tu proyecto de Supabase |
 | `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` | `sb_publishable_…` |
 | `SUPABASE_SECRET_KEY` | `sb_secret_…` |
