@@ -64,7 +64,7 @@ export async function allTransactions(supabase: Supabase) {
 export async function getPortfolio() {
   const supabase = await createClient();
 
-  const [balances, txs, movements, snapshot, lastRun] = await Promise.all([
+  const [balances, txs, movements, snapshot, runs] = await Promise.all([
     supabase
       .from("balances")
       .select("amount, value_eur, assets(symbol, name), sources(type, chain)"),
@@ -86,12 +86,18 @@ export async function getPortfolio() {
       .maybeSingle(),
     supabase
       .from("sync_runs")
-      .select("finished_at")
-      .eq("status", "ok")
+      .select("finished_at, status, source_id")
+      .not("finished_at", "is", null)
       .order("finished_at", { ascending: false })
-      .limit(1)
-      .maybeSingle(),
+      .limit(50),
   ]);
+
+  // Coinbase (con source_id) y la wallet (sin él) se sincronizan por separado:
+  // basta con que el último intento de uno de los dos haya fallado.
+  const recentRuns = runs.data ?? [];
+  const lastCoinbase = recentRuns.find((r) => r.source_id != null);
+  const lastWallet = recentRuns.find((r) => r.source_id == null);
+  const lastSync = recentRuns.find((r) => r.status === "ok")?.finished_at ?? null;
 
   const balanceBySymbol = new Map<string, { amount: number; valueEur: number }>();
   const meta = new Map<string, { name: string | null; origins: Origin[] }>();
@@ -274,7 +280,10 @@ export async function getPortfolio() {
         txHash: m.tx_hash,
       }),
     ),
-    lastSync: lastRun.data?.finished_at ?? null,
+    lastSync,
+    // El cron corre al menos una vez al día: más de 26 h sin datos es raro.
+    syncStale: !lastSync || Date.now() - Date.parse(lastSync) > 26 * 3600 * 1000,
+    syncFailing: lastCoinbase?.status === "error" || lastWallet?.status === "error",
   };
 }
 

@@ -25,6 +25,7 @@ Una persona por instalación, que acumula a largo plazo como un fondo personal: 
 
 ## 3. Funcionalidades
 
+- **Página de inicio:** solo el login, una frase de qué es y el enlace al código (`NEXT_PUBLIC_REPO_URL`, por defecto el repo original).
 - **Acceso privado:** login por enlace o código de un solo uso enviado al email del dueño (`ALLOWED_EMAIL`). Cualquier otro email no recibe nada.
 - **Sincronización:** Vercel Cron + botón "Sincronizar ahora". Coinbase (cuentas, saldos, movimientos) y wallets (saldos y movimientos por red). Todo se guarda en Supabase; el dashboard lee de la base de datos.
 - **Resumen:** valor total, variación 24h/7d/30d, dinero metido, rentabilidad (€, %, TIR anual), gráfico de evolución desde el primer movimiento, reparto por moneda y por ubicación, posiciones.
@@ -33,7 +34,7 @@ Una persona por instalación, que acumula a largo plazo como un fondo personal: 
 - **Cambios:** cada cambio entre monedas (qué diste, qué recibiste, comisión) y cómo le ha ido hasta hoy frente a no haberlo hecho.
 - **Movimientos:** lista unificada con filtros y enlace al explorador de bloques. Las transferencias entre tus propias cuentas se detectan y no cuentan como compra ni venta.
 - **Fiscal:** ganancias y pérdidas por FIFO por año (ventas y permutas), recompensas aparte, CSV. Orientativo: validar con un asesor.
-- **Alertas por email:** precio objetivo por moneda y movimientos nuevos en la wallet.
+- **Alertas por email:** precio objetivo por moneda, movimientos nuevos en la wallet y fallos de la sincronización (como mucho uno al día). El dashboard avisa si la última sincronización falló o hace más de un día que no hay datos.
 - **Ajustes:** direcciones de wallet, estado de las conexiones, alertas activas.
 - **Modo privacidad** y app instalable en el móvil.
 

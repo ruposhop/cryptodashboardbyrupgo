@@ -1,5 +1,5 @@
 import "server-only";
-import { checkPriceAlerts, notifyWalletMovements } from "@/lib/alerts";
+import { checkPriceAlerts, notifySyncFailure, notifyWalletMovements } from "@/lib/alerts";
 import { backfillHistory } from "@/lib/history";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { syncCoinbase } from "./coinbase";
@@ -17,7 +17,8 @@ async function attempt<T>(name: string, job: () => Promise<T>) {
     return { ok: true as const, result: await job() };
   } catch (e) {
     console.error(`sync ${name}`, e);
-    return { ok: false as const };
+    const error = e instanceof Error ? e.message : String(e);
+    return { ok: false as const, error };
   }
 }
 
@@ -80,8 +81,21 @@ export async function syncAll(trigger: "cron" | "manual" = "cron") {
 
   await attempt("alertas", checkPriceAlerts);
 
+  // Solo el cron avisa: si falla el botón manual, ya lo estás viendo.
+  if (trigger === "cron") {
+    const failures = [
+      ...(results.coinbase.ok ? [] : [{ name: "Coinbase", error: results.coinbase.error }]),
+      ...results.wallets.flatMap((w, i) =>
+        w.ok ? [] : [{ name: `Wallet ${shortAddress(addresses[i])}`, error: w.error }],
+      ),
+    ];
+    if (failures.length) await attempt("aviso fallo", () => notifySyncFailure(failures));
+  }
+
   return results;
 }
+
+const shortAddress = (a: string) => `${a.slice(0, 6)}…${a.slice(-4)}`;
 
 // Peticiones a Zerion en el mes natural en curso.
 export async function zerionCallsThisMonth() {

@@ -50,6 +50,7 @@ Guíale para crearlas (las copiará directamente a Vercel en el paso 4):
 |---|---|
 | `ALLOWED_EMAIL` | Su email, el único que podrá entrar |
 | `NEXT_PUBLIC_APP_NAME` | Nombre visible (opcional) |
+| `NEXT_PUBLIC_REPO_URL` | Enlace al código en la página de inicio (opcional) |
 | `NEXT_PUBLIC_SUPABASE_URL` / `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` / `SUPABASE_SECRET_KEY` | Supabase |
 | `RESEND_API_KEY` / `EMAIL_FROM` | Emails |
 | `COINBASE_API_KEY_NAME` / `COINBASE_API_PRIVATE_KEY` | API key ID y Secret de Coinbase |
