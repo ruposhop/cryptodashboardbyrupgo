@@ -1,4 +1,5 @@
 import "server-only";
+import { FIAT, getCurrency } from "@/lib/currency";
 import { underlying } from "@/lib/fifo";
 import { createClient } from "@/lib/supabase/server";
 
@@ -16,8 +17,6 @@ import { createClient } from "@/lib/supabase/server";
 //   (al recibir, el gas lo paga quien envía). Zerion no siempre da
 //   su valor en euros: entonces se calcula con el precio de ese día.
 
-const FIAT = new Set(["EUR", "USD"]);
-
 type Joined<T> = T | T[] | null;
 const one = <T,>(x: Joined<T>) => (Array.isArray(x) ? x[0] : x) as T;
 
@@ -34,6 +33,7 @@ export type Costs = {
 
 export async function getCosts(): Promise<Costs> {
   const supabase = await createClient();
+  const currency = await getCurrency();
   const [buysRes, swapsRes, gasRes, adjustRes] = await Promise.all([
     supabase
       .from("transactions")
@@ -74,7 +74,7 @@ export async function getCosts(): Promise<Costs> {
       currency: b.currency as string | null,
     }))
     .filter((b) => {
-      if (FIAT.has(b.symbol) || b.currency !== "EUR" || !b.total || !b.subtotal) return false;
+      if (FIAT.has(b.symbol) || b.currency !== currency || !b.total || !b.subtotal) return false;
       if (b.id && seen.has(b.id)) return false;
       if (b.id) seen.add(b.id);
       return true;

@@ -2,8 +2,8 @@ import Link from "next/link";
 import { AppHeader } from "@/components/app-header";
 import {
   formatAmount,
-  formatEur,
-  formatEurSigned,
+  formatMoney,
+  formatMoneySigned,
   pnlClass,
 } from "@/lib/format";
 import { requireOwner } from "@/lib/session";
@@ -34,12 +34,12 @@ export default async function Cambios() {
           Balance de todos tus cambios
         </h2>
         <p className={`mt-1 font-mono text-3xl tabular-nums ${pnlClass(s.swapsEffect)}`}>
-          {formatEurSigned(s.swapsEffect)}
+          {formatMoneySigned(s.swapsEffect)}
         </p>
         <p className="mt-1 text-sm">
-          Hoy tu cartera vale <span className="font-mono tabular-nums">{formatEur(s.total)}</span>
+          Hoy tu cartera vale <span className="font-mono tabular-nums">{formatMoney(s.total)}</span>
           . Si hubieras hecho las mismas compras pero nunca hubieras cambiado nada, valdría{" "}
-          <span className="font-mono tabular-nums">{formatEur(s.holdOnlyValue)}</span>.{" "}
+          <span className="font-mono tabular-nums">{formatMoney(s.holdOnlyValue)}</span>.{" "}
           {s.swapsEffect >= 0
             ? "Tus cambios te han hecho ganar esa diferencia."
             : "Tus cambios te han hecho perder esa diferencia."}
@@ -57,7 +57,7 @@ export default async function Cambios() {
           </div>
           <div className="flex justify-between gap-3 sm:block">
             <dt className="text-muted">Comisiones y diferencia de precio</dt>
-            <dd className="font-mono tabular-nums">{formatEur(s.swapCosts)}</dd>
+            <dd className="font-mono tabular-nums">{formatMoney(s.swapCosts)}</dd>
           </div>
         </dl>
         {s.holdOnly.length > 0 && (
@@ -65,7 +65,7 @@ export default async function Cambios() {
             Sin cambios tendrías:{" "}
             {s.holdOnly
               .slice(0, 6)
-              .map((h) => `${formatAmount(h.amount)} ${h.symbol} (${formatEur(h.valueEur)})`)
+              .map((h) => `${formatAmount(h.amount)} ${h.symbol} (${formatMoney(h.valueEur)})`)
               .join(" · ")}
             {s.holdOnly.length > 6 ? "…" : ""}
           </p>
@@ -99,22 +99,22 @@ export default async function Cambios() {
                 </p>
                 {w.verdict != null && (
                   <p className={`font-mono text-sm tabular-nums ${pnlClass(w.verdict)}`}>
-                    {formatEurSigned(w.verdict)} hoy
+                    {formatMoneySigned(w.verdict)} hoy
                   </p>
                 )}
               </div>
               <p className="mt-1 text-xs text-muted">
                 Diste <span className="font-mono tabular-nums">{formatAmount(w.gave.amount)} {w.gave.symbol}</span>{" "}
-                ({formatEur(w.gave.valueThen)}) y recibiste{" "}
+                ({formatMoney(w.gave.valueThen)}) y recibiste{" "}
                 <span className="font-mono tabular-nums">{formatAmount(w.got.amount)} {w.got.symbol}</span>{" "}
-                ({formatEur(w.got.valueThen)}).
+                ({formatMoney(w.got.valueThen)}).
                 {w.gave.valueToday != null && w.got.valueToday != null && (
                   <>
                     {" "}
                     Hoy: lo recibido vale{" "}
-                    <span className="font-mono tabular-nums">{formatEur(w.got.valueToday)}</span>; lo que
+                    <span className="font-mono tabular-nums">{formatMoney(w.got.valueToday)}</span>; lo que
                     diste valdría{" "}
-                    <span className="font-mono tabular-nums">{formatEur(w.gave.valueToday)}</span>.
+                    <span className="font-mono tabular-nums">{formatMoney(w.gave.valueToday)}</span>.
                   </>
                 )}
               </p>

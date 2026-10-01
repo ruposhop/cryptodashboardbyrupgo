@@ -1,7 +1,7 @@
 "use client";
 
 import { useActionState, useState } from "react";
-import { formatPrice } from "@/lib/format";
+import { currencySymbol, formatPrice, setCurrency } from "@/lib/format";
 import { createAlert, deleteAlert, type AlertState } from "./alert-actions";
 
 type Alert = {
@@ -19,11 +19,14 @@ export function Alerts({
   symbol,
   alerts,
   presets,
+  currency,
 }: {
   symbol: string;
   alerts: Alert[];
   presets: { label: string; price: number }[];
+  currency: string;
 }) {
+  setCurrency(currency);
   const [state, action, pending] = useActionState<AlertState, FormData>(createAlert, null);
   const [price, setPrice] = useState("");
   const [note, setNote] = useState("");
@@ -81,7 +84,7 @@ export function Alerts({
         <input type="hidden" name="symbol" value={symbol} />
         <input type="hidden" name="note" value={note} />
         <label className="flex flex-1 flex-col gap-1 text-xs text-muted">
-          Avísame cuando {symbol} llegue a (€)
+          Avísame cuando {symbol} llegue a ({currencySymbol()})
           <input
             name="price"
             required

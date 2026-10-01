@@ -1,98 +1,106 @@
 # Crypto Dashboard by Rupgo
 
-**Tu propio dashboard de inversiones crypto, privado, gratis y tuyo.** Une tu cuenta de Coinbase y tus wallets en una sola pantalla y responde a lo que de verdad importa:
+🇬🇧 **English** · 🇪🇸 [Español](README.es.md)
 
-- 💶 **¿Cuánto vale hoy todo lo que tengo** y cuánto he metido? Rentabilidad total, al año (TIR) y variación 24h / 7d / 30d.
-- 📈 **¿Cómo ha evolucionado?** Gráfico día a día desde tu primer movimiento, reconstruido solo.
-- 🪙 **¿Gano o pierdo con cada moneda?** Resultado por moneda, gráfico de precio con tus compras y ventas marcadas y todos sus movimientos.
-- 🔁 **¿Me han salido bien los cambios entre monedas?** Cada cambio comparado con lo que tendrías si no lo hubieras hecho, y cuánto se fue en comisiones.
-- 🎯 **¿A qué precio tiene que estar cada moneda** para volver a positivo?
-- 🧾 **Informe fiscal** por FIFO y por año, con CSV para tu gestor.
-- 🔔 **Alertas por email** de precio, de movimientos en tu wallet y si la sincronización falla.
-- 🙈 Modo privacidad, app instalable en el móvil y tema oscuro.
+**Your own crypto investment dashboard: private, free and yours.** It brings your Coinbase account and your wallets together on one screen and answers what actually matters:
 
-> **Solo lectura y privado.** Nunca puede mover fondos, no pide claves privadas ni frases semilla, y cada persona lo instala con **sus propias** cuentas (Supabase, Vercel, Coinbase…). Nadie más ve tus datos, tampoco el autor de este repo.
+- 💵 **What is everything I own worth today**, and how much have I put in? Total return, annualized return (IRR) and 24h / 7d / 30d change. **In dollars or euros**: it uses your Coinbase account's currency.
+- 💸 **How much have fees cost me?** Purchase fees, price spread, coin-to-coin swaps and gas, plus where every dollar (or euro) you put in comes from.
+- 📈 **How has it evolved?** Day-by-day chart since your first transaction, rebuilt automatically.
+- 🪙 **Am I winning or losing with each coin?** Result per coin, price chart with your buys and sells marked, and all its transactions.
+- 🔁 **Did my swaps between coins pay off?** Each swap compared with what you'd have if you hadn't made it, and how much went to fees.
+- 🎯 **Am I above or below my break-even?** For the whole portfolio and for each coin: how far it could fall before you lose money, or how much it needs to rise.
+- 🧾 **Tax report** using FIFO, per year, with a CSV for your accountant.
+- 🔔 **Email alerts** for price targets, new wallet transactions and failed syncs.
+- 🙈 Privacy mode, installable as a phone app, dark theme.
+
+> **Read-only and private.** It can never move funds, it never asks for private keys or seed phrases, and everyone installs it with **their own** accounts (Supabase, Vercel, Coinbase…). Nobody else sees your data, not even the author of this repo.
+
+> **Language:** the app's interface is in Spanish for now. Amounts are shown in your currency.
 
 ---
 
-## 🎓 Hecho por Rubén Benarroch · [rupgo.com](https://rupgo.com)
+## 🎓 Made by Rubén Benarroch · [rupgo.com](https://rupgo.com)
 
-Este proyecto lo construí entero con IA (Claude Code), sin escribir el código a mano. **En [rupgo.com](https://rupgo.com) enseño a crear proyectos reales como este con inteligencia artificial**, desde la idea hasta tenerlo publicado con base de datos, emails, pagos y dominio propio. Si te gusta este dashboard y quieres aprender a crear los tuyos, [échale un vistazo a los cursos](https://rupgo.com).
+I built this whole project with AI (Claude Code), without writing the code by hand. **At [rupgo.com](https://rupgo.com) I teach how to build real projects like this one with AI**, from the idea to a published product with a database, emails, payments and your own domain. If you like this dashboard and want to learn to build your own, [take a look at the courses](https://rupgo.com).
 
 ---
 
-## ✨ Instálalo con tu IA (recomendado)
+## ✨ Install it with your AI (recommended)
 
-1. Haz **Fork** de este repo en GitHub (botón arriba a la derecha) y clónalo en tu ordenador.
-2. Abre la carpeta con **Claude Code** (u otro asistente de IA) y escríbele:
+1. **Fork** this repo on GitHub (button at the top right) and clone it to your computer.
+2. Open the folder with **Claude Code** (or another AI assistant) and tell it:
 
-   > *Quiero instalar mi propio Crypto Dashboard. Sigue la guía docs/INSTALAR-CON-IA.md.*
+   > *I want to install my own Crypto Dashboard. Follow the guide in docs/INSTALAR-CON-IA.md.*
 
-3. Te irá guiando paso a paso: crear Supabase, sacar las claves de Coinbase (solo lectura) y Zerion, ponerlas en Vercel y entrar por primera vez. **No le pegues claves en el chat**: van directamente en Vercel.
+3. It will guide you step by step: create Supabase, get your Coinbase (read-only) and Zerion keys, add them to Vercel and log in for the first time. **Never paste keys into the chat**: they go straight into Vercel.
 
-La guía que sigue tu IA está en [`docs/INSTALAR-CON-IA.md`](docs/INSTALAR-CON-IA.md). También la puedes seguir tú a mano.
+The guide your AI follows is [`docs/INSTALAR-CON-IA.md`](docs/INSTALAR-CON-IA.md) (in Spanish; your AI can follow it and talk to you in English). You can also follow it by hand.
 
-## 🧰 Qué necesitas
+## 🧰 What you need
 
-Cuentas gratuitas en [GitHub](https://github.com), [Vercel](https://vercel.com) (créala con GitHub), [Supabase](https://supabase.com), [Resend](https://resend.com) y [Zerion API](https://zerion.io/api), y tu cuenta de Coinbase. **Coste: 0 €** con los planes gratuitos.
+Free accounts on [GitHub](https://github.com), [Vercel](https://vercel.com) (sign up with GitHub), [Supabase](https://supabase.com), [Resend](https://resend.com) and [Zerion API](https://zerion.io/api), plus your Coinbase account. **Cost: 0** on the free plans.
 
-## 🛠️ Instalación a mano (unos 30 minutos)
+## 🛠️ Manual install (about 30 minutes)
 
-1. **Copia el repo:** Fork en GitHub.
-2. **Supabase:** crea un proyecto, pega todo [`supabase/schema.sql`](supabase/schema.sql) en **SQL Editor → Run** (una vez) y desactiva **Authentication → Sign In / Providers → Allow new users to sign up**. Apunta la URL, la *publishable key* y la *secret key* (Project Settings → API Keys).
-3. **Claves:**
-   - **Coinbase:** [portal.cdp.coinbase.com](https://portal.cdp.coinbase.com) → API Keys → *secret API key* con **solo View (read-only)** y *Opt-out of IP allowlisting*. Guarda el API key ID y el Secret (solo se muestra una vez).
-   - **Zerion:** una API key (plan gratuito).
-   - **Resend:** una API key. Sin dominio propio, usa `onboarding@resend.dev` como remitente (solo entrega al email de tu cuenta de Resend).
-4. **Vercel:** importa tu fork y, antes de desplegar, crea las variables de [`.env.example`](.env.example) en **Settings → Environment Variables** (las secretas como *Sensitive*):
+1. **Copy the repo:** Fork it on GitHub.
+2. **Supabase:** create a project, paste the whole [`supabase/schema.sql`](supabase/schema.sql) into **SQL Editor → Run** (once) and turn off **Authentication → Sign In / Providers → Allow new users to sign up**. Note the URL, the *publishable key* and the *secret key* (Project Settings → API Keys).
+3. **Keys:**
+   - **Coinbase:** [portal.cdp.coinbase.com](https://portal.cdp.coinbase.com) → API Keys → *secret API key* with **View only (read-only)** and *Opt-out of IP allowlisting*. Save the API key ID and the Secret (shown only once).
+   - **Zerion:** an API key (free plan).
+   - **Resend:** an API key. Without your own domain, use `onboarding@resend.dev` as the sender (it only delivers to your Resend account's email).
+4. **Vercel:** import your fork and, before deploying, create the variables from [`.env.example`](.env.example) in **Settings → Environment Variables** (mark the secret ones as *Sensitive*):
 
-| Variable | Valor |
+| Variable | Value |
 |---|---|
-| `ALLOWED_EMAIL` | Tu email (el único que podrá entrar) |
-| `NEXT_PUBLIC_APP_NAME` | El nombre que quieras ver (opcional) |
-| `NEXT_PUBLIC_REPO_URL` | Enlace al código en la página de inicio (opcional; por defecto, este repo) |
-| `NEXT_PUBLIC_SUPABASE_URL` | URL de tu proyecto de Supabase |
+| `ALLOWED_EMAIL` | Your email (the only one that can log in) |
+| `NEXT_PUBLIC_APP_NAME` | The name you want to see (optional) |
+| `NEXT_PUBLIC_REPO_URL` | Link to the code on the home page (optional; defaults to this repo) |
+| `CURRENCY` | `USD` or `EUR` (optional; if not set, it uses your Coinbase account's currency) |
+| `NEXT_PUBLIC_SUPABASE_URL` | Your Supabase project URL |
 | `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` | `sb_publishable_…` |
 | `SUPABASE_SECRET_KEY` | `sb_secret_…` |
-| `RESEND_API_KEY` | Tu key de Resend |
-| `EMAIL_FROM` | `Nombre <tu@tudominio.com>` o `Nombre <onboarding@resend.dev>` |
-| `COINBASE_API_KEY_NAME` | El *API key ID* de Coinbase |
-| `COINBASE_API_PRIVATE_KEY` | El *Secret* de Coinbase |
-| `ZERION_API_KEY` | Tu key de Zerion |
-| `CRON_SECRET` | Un texto largo aleatorio (`openssl rand -hex 32`) |
+| `RESEND_API_KEY` | Your Resend key |
+| `EMAIL_FROM` | `Name <you@yourdomain.com>` or `Name <onboarding@resend.dev>` |
+| `COINBASE_API_KEY_NAME` | The Coinbase *API key ID* |
+| `COINBASE_API_PRIVATE_KEY` | The Coinbase *Secret* |
+| `ZERION_API_KEY` | Your Zerion key |
+| `CRON_SECRET` | A long random string (`openssl rand -hex 32`) |
 
-5. **Despliega y entra:** abre tu URL, pide el acceso con tu email (llega un enlace y un código), añade tu wallet en **Ajustes** y pulsa **↻**. La primera sincronización importa todo tu historial y reconstruye el gráfico.
+5. **Deploy and log in:** open your URL, request access with your email (you get a link and a code), add your wallet in **Ajustes** (Settings) and press **↻**. The first sync imports your whole history and rebuilds the chart.
 
-En el móvil puedes instalarla: en Safari, **Compartir → Añadir a pantalla de inicio**. En la app instalada entra con el **código** del email.
+On your phone you can install it: in Safari, **Share → Add to Home Screen**. In the installed app, log in with the **code** from the email.
 
-## ⏱️ Sincronizar cada hora (opcional, gratis)
+## ⏱️ Hourly sync (optional, free)
 
-Vercel sincroniza sola una vez al día y siempre puedes pulsar ↻. Para tener datos cada hora, este repo trae un workflow de GitHub Actions:
+Vercel syncs once a day on its own, and you can always press ↻. For hourly data, this repo includes a GitHub Actions workflow:
 
-1. En tu fork: **Actions** → activa los workflows.
-2. **Settings → Secrets and variables → Actions**, crea `SYNC_URL` (`https://TU-DOMINIO/api/cron/sync`; debe ser accesible, por ejemplo tu dominio propio) y `CRON_SECRET` (el mismo que en Vercel).
-3. Pruébalo en **Actions → Sincronización cada hora → Run workflow**.
+1. In your fork: **Actions** → enable workflows.
+2. **Settings → Secrets and variables → Actions**: create `SYNC_URL` (`https://YOUR-DOMAIN/api/cron/sync`; it must be publicly reachable, e.g. your own domain) and `CRON_SECRET` (the same as in Vercel).
+3. Test it in **Actions → Sincronización cada hora → Run workflow**.
 
-## 🔄 Recibe las mejoras
+## 🔄 Get the updates
 
-Este repo se actualiza con nuevas funciones. Para tenerlas:
+This repo keeps getting new features. To get them:
 
-1. En tu fork de GitHub pulsa **Sync fork → Update branch** (o pídeselo a tu IA). Vercel vuelve a desplegar solo.
-2. Si la actualización cambia la base de datos, habrá un archivo nuevo en [`supabase/updates/`](supabase/updates): ejecútalo una vez en Supabase → SQL Editor.
+1. In your GitHub fork, press **Sync fork → Update branch** (or ask your AI). Vercel redeploys automatically.
+2. If an update changes the database, there will be a new file in [`supabase/updates/`](supabase/updates): run it once in Supabase → SQL Editor.
 
-## 🧮 Cómo calcula
+## 🧮 How it calculates
 
-- **Dinero metido** = compras con euros + entradas desde fuera de tus cuentas − ventas a euros − salidas fuera. Lo que mueves entre tu Coinbase y tu wallet no cuenta.
-- **Rentabilidad** = lo que vale hoy − dinero metido. **Al año (TIR)** tiene en cuenta cuándo entró cada euro.
-- **Fiscal:** FIFO por año; las recompensas de staking cuentan a su valor al recibirlas. Es orientativo: valídalo con tu asesor.
+- **Currency:** your Coinbase account's currency (dollars, euros…), detected on the first sync. You can force it with `CURRENCY`. It's fixed: if you change it later, the history has to be imported again.
+- **Money put in** = what you paid for your purchases (fees included) + incoming transfers from outside your accounts − sales to cash − outgoing transfers. Moving funds between your Coinbase and your wallet doesn't count.
+- **Return** = value today − money put in. All fees are already included. **Annualized (IRR)** takes into account when you made each contribution.
+- **Break-even** for each coin = what you paid for what you hold (FIFO) ÷ amount. Above it you're in profit; below it, at a loss.
+- **Taxes:** FIFO per year; staking rewards count at their value when received. It's a guide only: check it with your tax advisor.
 
-## 🔒 Seguridad
+## 🔒 Security
 
-- La API key de Coinbase es de **solo lectura** y vive en tus variables de Vercel; solo la usa el servidor.
-- Solo tu email puede entrar (enlace o código de un solo uso, con límite de intentos). La base de datos tiene RLS: nadie más puede leerla.
-- Ninguna clave se guarda en el código. Si ves alguna en un fork, es un error de quien la subió: regénérala.
+- The Coinbase API key is **read-only** and lives in your Vercel variables; only the server uses it.
+- Only your email can log in (one-time link or code, with rate limits). The database uses RLS: nobody else can read it.
+- No key is stored in the code. If you see one in a fork, it's a mistake by whoever pushed it: rotate it.
 
-## 💻 Desarrollo
+## 💻 Development
 
 ```bash
 npm install
@@ -106,12 +114,12 @@ vercel env pull .env.local
 npm run dev
 ```
 
-Stack: Next.js 16, TypeScript, Tailwind CSS v4, Recharts, Supabase, Vercel, Resend. Si desarrollas con Claude Code, lee [`CLAUDE.md`](CLAUDE.md).
+Stack: Next.js 16, TypeScript, Tailwind CSS v4, Recharts, Supabase, Vercel, Resend. If you develop with Claude Code, read [`CLAUDE.md`](CLAUDE.md).
 
-## 📄 Licencia
+## 📄 License
 
-[MIT](LICENSE): puedes usarlo, modificarlo y compartirlo libremente, manteniendo el aviso de copyright.
+[MIT](LICENSE): you can use, modify and share it freely, keeping the copyright notice.
 
 ---
 
-¿Te ha servido? Dale una ⭐ al repo y, si quieres aprender a crear proyectos así con IA, te espero en **[rupgo.com](https://rupgo.com)**. — *Rubén Benarroch*
+Found it useful? Give the repo a ⭐ and, if you want to learn to build projects like this with AI, see you at **[rupgo.com](https://rupgo.com)**. — *Rubén Benarroch*

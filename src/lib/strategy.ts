@@ -1,6 +1,6 @@
 import "server-only";
 import { currentPrices } from "@/lib/alerts";
-import { underlying } from "@/lib/fifo";
+import { FIAT, underlying } from "@/lib/fifo";
 import { getPortfolio } from "@/lib/portfolio";
 import { createClient } from "@/lib/supabase/server";
 
@@ -8,7 +8,6 @@ import { createClient } from "@/lib/supabase/server";
 // entre monedas. Aquí se mide la rentabilidad del dinero metido y si los
 // cambios entre monedas han sumado o restado.
 
-const FIAT = new Set(["EUR", "USD"]);
 const DAY = 86400000;
 
 type Row = {

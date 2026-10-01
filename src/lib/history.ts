@@ -1,15 +1,15 @@
 import "server-only";
+import { FIAT, getCurrency, STABLE } from "@/lib/currency";
 import { underlying } from "@/lib/fifo";
 import { createAdminClient } from "@/lib/supabase/admin";
 
 // Reconstruye el valor diario de la cartera hacia atrás (MASTERPLAN §3.4):
 // cantidades a partir de los movimientos y precios de cierre diarios de la
-// API pública de Coinbase Exchange (sin clave, sin cupo mensual).
+// API pública de Coinbase Exchange (sin clave, sin cupo mensual), en la moneda
+// de la instalación (las columnas *_eur guardan esa moneda).
 
 const EXCHANGE = "https://api.exchange.coinbase.com";
 const DAY = 24 * 3600 * 1000;
-const FIAT = new Set(["EUR", "USD"]);
-const STABLE_EUR = new Set(["EURC"]);
 const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 const isoDay = (t: number) => new Date(t).toISOString().slice(0, 10);
 
@@ -48,22 +48,23 @@ async function candles(product: string, from: number, to: number) {
   return closes;
 }
 
-async function priceSeries(symbol: string, from: number, to: number) {
+async function priceSeries(symbol: string, currency: string, from: number, to: number) {
   const p = await listProducts();
-  if (p.has(`${symbol}-EUR`)) return candles(`${symbol}-EUR`, from, to);
-  if (p.has(`${symbol}-USD`)) {
-    // Sin par en EUR: precio en USD convertido con el cambio implícito de BTC.
-    const [usd, btcEur, btcUsd] = await Promise.all([
+  if (p.has(`${symbol}-${currency}`)) return candles(`${symbol}-${currency}`, from, to);
+  if (currency !== "USD" && p.has(`${symbol}-USD`)) {
+    // Sin par en tu moneda: precio en USD convertido con el cambio implícito de BTC.
+    const [usd, btcLocal, btcUsd] = await Promise.all([
       candles(`${symbol}-USD`, from, to),
-      candles("BTC-EUR", from, to),
+      candles(`BTC-${currency}`, from, to),
       candles("BTC-USD", from, to),
     ]);
-    const eur = new Map<string, number>();
+    const local = new Map<string, number>();
     for (const [d, v] of usd) {
-      const rate = btcEur.get(d) && btcUsd.get(d) ? btcEur.get(d)! / btcUsd.get(d)! : null;
-      if (rate) eur.set(d, v * rate);
+      const rate =
+        btcLocal.get(d) && btcUsd.get(d) ? btcLocal.get(d)! / btcUsd.get(d)! : null;
+      if (rate) local.set(d, v * rate);
     }
-    return eur;
+    return local;
   }
   return new Map<string, number>();
 }
@@ -95,6 +96,8 @@ type TxRow = {
 // Idempotente: se puede lanzar tantas veces como se quiera.
 export async function backfillHistory() {
   const db = createAdminClient();
+  const currency = await getCurrency();
+  const stable = STABLE[currency] ?? new Set<string>();
 
   const txs = (
     await allRows<TxRow>(
@@ -130,12 +133,12 @@ export async function backfillHistory() {
     prices.get(r.symbol)!.set(r.date, Number(r.price_eur));
   }
   for (const symbol of symbols) {
-    if (STABLE_EUR.has(symbol)) continue;
+    if (stable.has(symbol)) continue;
     const known = prices.get(symbol) ?? new Map<string, number>();
     const lastKnown = [...known.keys()].sort().at(-1);
     const from = lastKnown ? Date.parse(lastKnown) + DAY : first;
     if (from >= today) continue;
-    const fresh = await priceSeries(symbol, from, today - DAY);
+    const fresh = await priceSeries(symbol, currency, from, today - DAY);
     if (fresh.size) {
       const rows = [...fresh].map(([date, price_eur]) => ({ symbol, date, price_eur }));
       for (let i = 0; i < rows.length; i += 1000) {
@@ -176,7 +179,7 @@ export async function backfillHistory() {
     let total = 0;
     for (const [symbol, qty] of holdings) {
       if (qty <= 1e-12) continue;
-      const price = STABLE_EUR.has(symbol) ? 1 : (prices.get(symbol)?.get(day) ?? lastPrice.get(symbol));
+      const price = stable.has(symbol) ? 1 : (prices.get(symbol)?.get(day) ?? lastPrice.get(symbol));
       if (price != null) {
         total += qty * price;
         lastPrice.set(symbol, price);

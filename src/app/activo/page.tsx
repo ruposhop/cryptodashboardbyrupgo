@@ -2,8 +2,8 @@ import Link from "next/link";
 import { AppHeader } from "@/components/app-header";
 import {
   formatAmount,
-  formatEur,
-  formatEurSigned,
+  formatMoney,
+  formatMoneySigned,
   formatPrice,
   pnlClass,
 } from "@/lib/format";
@@ -55,9 +55,9 @@ export default async function Monedas() {
                   </p>
                 </div>
                 <div className="shrink-0 text-right">
-                  <p className="font-mono tabular-nums">{formatEur(a.valueEur)}</p>
+                  <p className="font-mono tabular-nums">{formatMoney(a.valueEur)}</p>
                   <p className={`font-mono text-xs tabular-nums ${pnlClass(a.resultEur)}`}>
-                    {formatEurSigned(a.resultEur)} en total
+                    {formatMoneySigned(a.resultEur)} en total
                   </p>
                 </div>
               </Link>
@@ -81,7 +81,7 @@ export default async function Monedas() {
                   <p className="font-medium">{a.symbol}</p>
                   <div className="text-right">
                     <p className={`font-mono tabular-nums ${pnlClass(a.resultEur)}`}>
-                      {formatEurSigned(a.resultEur)}
+                      {formatMoneySigned(a.resultEur)}
                     </p>
                     <p className="text-xs text-muted">resultado total</p>
                   </div>

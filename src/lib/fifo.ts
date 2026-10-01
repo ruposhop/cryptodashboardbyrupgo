@@ -32,7 +32,8 @@ export type FifoAsset = {
 const ZERO_COST = new Set(["ajuste"]);
 // No cambian lo que tengo: moverlo entre mis propias cuentas.
 const IGNORED = new Set(["interno"]);
-const FIAT = new Set(["EUR", "USD"]);
+// Dinero en efectivo: no es una inversión ni cuenta para el coste.
+export const FIAT = new Set(["EUR", "USD", "GBP", "CHF", "CAD", "AUD"]);
 
 // Versiones "envueltas" del mismo activo: Coinbase envía BTC a Base como
 // cbBTC, así que para el coste son el mismo activo.

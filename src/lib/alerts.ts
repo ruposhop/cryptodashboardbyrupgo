@@ -1,6 +1,7 @@
 import "server-only";
+import { getCurrency } from "@/lib/currency";
 import { emailButton, emailTemplate } from "@/lib/email-template";
-import { formatAmount, formatEur, formatPrice } from "@/lib/format";
+import { formatAmount, formatMoney, formatPrice } from "@/lib/format";
 import { sendEmail } from "@/lib/resend";
 import { createAdminClient } from "@/lib/supabase/admin";
 
@@ -10,9 +11,10 @@ const SITE = process.env.VERCEL_PROJECT_PRODUCTION_URL
   ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`
   : "http://localhost:3000";
 
-// Precio actual en EUR de cualquier activo listado en Coinbase (endpoint público).
+// Precio actual (en la moneda de la instalación) de cualquier activo listado en Coinbase (endpoint público).
 export async function currentPrices() {
-  const res = await fetch("https://api.coinbase.com/v2/exchange-rates?currency=EUR", {
+  const currency = await getCurrency();
+  const res = await fetch(`https://api.coinbase.com/v2/exchange-rates?currency=${currency}`, {
     cache: "no-store",
   });
   const { data } = (await res.json()) as { data: { rates: Record<string, string> } };
@@ -81,7 +83,7 @@ export async function notifyWalletMovements(fresh: Fresh[]) {
     .slice(0, 20)
     .map(
       (f) =>
-        `<tr><td style="padding:4px 8px 4px 0;color:#8b919c;">${TYPE[f.type] ?? escapeHtml(f.type)}</td><td style="padding:4px 8px;">${escapeHtml(f.symbol)}</td><td style="padding:4px 0;text-align:right;font-family:ui-monospace,Menlo,monospace;">${f.amount > 0 ? "+" : ""}${formatAmount(f.amount)}${f.valueEur != null ? ` · ${formatEur(f.valueEur)}` : ""}</td></tr>`,
+        `<tr><td style="padding:4px 8px 4px 0;color:#8b919c;">${TYPE[f.type] ?? escapeHtml(f.type)}</td><td style="padding:4px 8px;">${escapeHtml(f.symbol)}</td><td style="padding:4px 0;text-align:right;font-family:ui-monospace,Menlo,monospace;">${f.amount > 0 ? "+" : ""}${formatAmount(f.amount)}${f.valueEur != null ? ` · ${formatMoney(f.valueEur)}` : ""}</td></tr>`,
     )
     .join("");
   await sendEmail(

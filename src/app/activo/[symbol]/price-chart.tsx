@@ -12,7 +12,7 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
-import { formatPrice } from "@/lib/format";
+import { formatPrice, setCurrency } from "@/lib/format";
 
 type Marker = { date: string; price: number; side: "in" | "out"; type: string };
 
@@ -41,11 +41,14 @@ export function PriceChart({
   series,
   markers,
   breakEven,
+  currency,
 }: {
   series: { date: string; price: number }[];
   markers: Marker[];
   breakEven: number | null;
+  currency: string;
 }) {
+  setCurrency(currency);
   const [range, setRange] = useState<(typeof RANGES)[number]["key"]>("Todo");
 
   const data = useMemo(() => {

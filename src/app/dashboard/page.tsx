@@ -2,11 +2,13 @@ import Link from "next/link";
 import {
   formatAmount,
   formatDate,
-  formatEur,
-  formatEurSigned,
+  formatMoney,
+  formatMoneySigned,
   formatPct,
   formatPrice,
   formatWeight,
+  currencyName,
+  getDisplayCurrency,
   pnlClass,
 } from "@/lib/format";
 import { explorerUrl, TYPE_LABEL } from "@/lib/movements";
@@ -56,7 +58,7 @@ export default async function Dashboard() {
       <section aria-label="Resumen" className="mt-8">
         <p className="text-sm text-muted">Valor total</p>
         <p className="mt-1 font-mono text-4xl tabular-nums tracking-tight sm:text-5xl">
-          {formatEur(p.total)}
+          {formatMoney(p.total)}
         </p>
         <ul aria-label="Variación" className="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-sm">
           {variations.map((v) => (
@@ -66,14 +68,14 @@ export default async function Dashboard() {
                 <span className="text-muted">—</span>
               ) : (
                 <span className={`font-mono tabular-nums ${pnlClass(v.change)}`}>
-                  {formatEurSigned(v.change)} ({formatPct(v.pct!)})
+                  {formatMoneySigned(v.change)} ({formatPct(v.pct!)})
                 </span>
               )}
             </li>
           ))}
         </ul>
         <p className="mt-2 text-xs text-muted">
-          Coinbase {formatEur(p.byOrigin.Coinbase)} · Wallet {formatEur(p.byOrigin.Wallet)}
+          Coinbase {formatMoney(p.byOrigin.Coinbase)} · Wallet {formatMoney(p.byOrigin.Wallet)}
           {" · "}
           {p.lastSync ? `Actualizado ${formatDate(p.lastSync)}` : "Sin sincronizar"}
         </p>
@@ -92,9 +94,9 @@ export default async function Dashboard() {
         </p>
 
         <dl className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-4">
-          <Kpi label="Has metido">{formatEur(p.contributed)}</Kpi>
+          <Kpi label="Has metido">{formatMoney(p.contributed)}</Kpi>
           <Kpi label="Rentabilidad">
-            <span className={pnlClass(p.pnl)}>{formatEurSigned(p.pnl)}</span>
+            <span className={pnlClass(p.pnl)}>{formatMoneySigned(p.pnl)}</span>
             {pnlPct != null && (
               <span className={`block text-sm sm:ml-2 sm:inline ${pnlClass(pnlPct)}`}>
                 {formatPct(pnlPct)}
@@ -108,13 +110,13 @@ export default async function Dashboard() {
               "—"
             )}
           </Kpi>
-          <Kpi label="Recompensas staking">{formatEur(p.rewards)}</Kpi>
+          <Kpi label="Recompensas staking">{formatMoney(p.rewards)}</Kpi>
         </dl>
         <p className="mt-3 text-xs leading-5 text-muted">
-          Rentabilidad = lo que vale hoy − lo que has metido (compras con euros y lo que
+          Rentabilidad = lo que vale hoy − lo que has metido (compras con {currencyName()} y lo que
           entró de fuera de tus cuentas). Ya descuenta todas las comisiones
           (al comprar, al cambiar de moneda y de la red). «Al año» es la rentabilidad anual equivalente teniendo en cuenta cuándo
-          entró cada euro. El cálculo fiscal (FIFO) está en{" "}
+          hiciste cada aportación. El cálculo fiscal (FIFO) está en{" "}
           <Link href="/fiscal" className="underline underline-offset-2 hover:text-foreground">
             Fiscal
           </Link>
@@ -131,30 +133,30 @@ export default async function Dashboard() {
             <h3 className="text-sm font-medium">De dónde sale «Has metido»</h3>
             <dl className="mt-3 space-y-2 text-sm">
               <Line
-                label={`Compras con euros (${parts.compras.count})`}
+                label={`Compras con ${currencyName()} (${parts.compras.count})`}
                 hint="lo que pagaste, comisión incluida"
-                value={formatEur(parts.compras.eur)}
+                value={formatMoney(parts.compras.eur)}
               />
               {parts.entradas.count > 0 && (
                 <Line
                   label={`Entradas de fuera (${parts.entradas.count})`}
                   hint="a su valor el día que llegaron"
-                  value={formatEur(parts.entradas.eur)}
+                  value={formatMoney(parts.entradas.eur)}
                 />
               )}
               {parts.ventas.count > 0 && (
                 <Line
-                  label={`Ventas a euros (${parts.ventas.count})`}
-                  value={`−${formatEur(parts.ventas.eur)}`}
+                  label={`Ventas a ${currencyName()} (${parts.ventas.count})`}
+                  value={`−${formatMoney(parts.ventas.eur)}`}
                 />
               )}
               {parts.salidas.count > 0 && (
                 <Line
                   label={`Salidas fuera de tus cuentas (${parts.salidas.count})`}
-                  value={`−${formatEur(parts.salidas.eur)}`}
+                  value={`−${formatMoney(parts.salidas.eur)}`}
                 />
               )}
-              <Line label="Has metido" value={formatEur(p.contributed)} total />
+              <Line label="Has metido" value={formatMoney(p.contributed)} total />
             </dl>
           </div>
 
@@ -164,28 +166,28 @@ export default async function Dashboard() {
               <Line
                 label={`Comisión de compra (${costs.buys})`}
                 hint="la que declara Coinbase"
-                value={formatEur(costs.buyFees)}
+                value={formatMoney(costs.buyFees)}
               />
               {costs.buyMargin != null && (
                 <Line
                   label="Margen en el precio de compra"
                   hint={`estimado con el cierre de cada día${costs.buyMarginCoverage < 0.99 ? `, sobre el ${formatWeight(costs.buyMarginCoverage)} de las compras` : ""}`}
-                  value={`≈ ${formatEur(costs.buyMargin)}`}
+                  value={`≈ ${formatMoney(costs.buyMargin)}`}
                 />
               )}
               <Line
                 label={`Cambios entre monedas (${costs.swaps})`}
                 hint="comisión y diferencia de precio"
-                value={formatEur(costs.swapCosts)}
+                value={formatMoney(costs.swapCosts)}
                 href="/cambios"
               />
               {costs.gas >= 0.01 && (
-                <Line label="Gas de la red (wallet)" value={formatEur(costs.gas)} />
+                <Line label="Gas de la red (wallet)" value={formatMoney(costs.gas)} />
               )}
               <Line
                 label="Total"
                 hint={p.contributed ? `${formatWeight(costs.total / p.contributed)} de lo metido` : undefined}
-                value={`≈ ${formatEur(costs.total)}`}
+                value={`≈ ${formatMoney(costs.total)}`}
                 total
               />
             </dl>
@@ -202,7 +204,7 @@ export default async function Dashboard() {
           Evolución
         </h2>
         <div className="mt-3 rounded-xl border border-border p-4 sm:p-5">
-          <HistoryChart points={history} />
+          <HistoryChart points={history} currency={getDisplayCurrency()} />
         </div>
         <p className="mt-2 text-xs text-muted">
           Días anteriores al 30/09/2026 reconstruidos con tus movimientos y los cierres
@@ -210,37 +212,49 @@ export default async function Dashboard() {
         </p>
       </section>
 
-      <section aria-labelledby="positivo" className="mt-10">
-        <h2 id="positivo" className="text-sm uppercase tracking-wider text-muted">
-          Para estar en positivo
+      <section aria-labelledby="equilibrio" className="mt-10">
+        <h2 id="equilibrio" className="text-sm uppercase tracking-wider text-muted">
+          Tu punto de equilibrio
         </h2>
         <div className="mt-3 rounded-xl border border-border bg-surface p-4 sm:p-5">
-          {p.deficit > 0 ? (
-            <>
-              <p className="text-sm leading-6">
-                Te faltan{" "}
-                <span className="font-mono tabular-nums text-loss">
-                  {formatEur(p.deficit)}
-                </span>{" "}
-                para que tu fondo vuelva a valer lo que has metido. Si toda la cartera sube por igual,
-                necesita subir un{" "}
+          <p className="text-sm text-muted">
+            {p.pnl >= 0 ? "Estás por encima de lo que has metido" : "Estás por debajo de lo que has metido"}
+          </p>
+          <p className={`mt-1 font-mono text-2xl tabular-nums ${pnlClass(p.pnl)}`}>
+            {formatMoneySigned(p.pnl)}
+            {p.contributed > 0 && (
+              <span className="ml-2 text-base">{formatPct(p.pnl / p.contributed)}</span>
+            )}
+          </p>
+          <BreakEvenBar value={p.total} invested={p.contributed} />
+          <p className="mt-3 text-sm leading-6">
+            {p.pnl >= 0 ? (
+              <>
+                Tu cartera podría bajar un{" "}
                 <span className="font-mono tabular-nums">
-                  {formatPct(p.uniformRise)}
-                </span>
-                .
-              </p>
-              <p className="mt-2 text-xs text-muted">
-                Solo cuenta lo que tienes hoy: lo que se perdió al cambiar de moneda (por
-                ejemplo ADA) ya no se recupera si esa moneda sube, porque ya no la tienes.
-              </p>
-            </>
-          ) : (
-            <p className="text-sm leading-6">
-              Tu fondo ya vale más de lo que has metido:{" "}
-              <span className="font-mono tabular-nums text-gain">
-                {formatEurSigned(p.pnl)}
+                  {formatWeight(p.total ? p.pnl / p.total : 0)}
+                </span>{" "}
+                y seguirías sin perder dinero.
+              </>
+            ) : (
+              <>
+                Si toda la cartera sube un{" "}
+                <span className="font-mono tabular-nums">{formatWeight(p.uniformRise)}</span>,
+                vuelves a tu punto de equilibrio.
+              </>
+            )}
+          </p>
+          {Math.abs(p.pnl - p.unrealized) >= 1 && (
+            <p className="mt-2 text-xs leading-5 text-muted">
+              Lo que tienes ahora va{" "}
+              <span className={`font-mono tabular-nums ${pnlClass(p.unrealized)}`}>
+                {formatMoneySigned(p.unrealized)}
+              </span>{" "}
+              sobre lo que te costó. El resto (
+              <span className={`font-mono tabular-nums ${pnlClass(p.pnl - p.unrealized)}`}>
+                {formatMoneySigned(p.pnl - p.unrealized)}
               </span>
-              .
+              ) viene de monedas que ya no tienes, de cambios entre monedas y de comisiones.
             </p>
           )}
         </div>
@@ -250,75 +264,60 @@ export default async function Dashboard() {
             <thead className="bg-surface text-left text-xs text-muted">
               <tr>
                 <th className="px-4 py-3 font-normal">Activo</th>
-                <th className="px-4 py-3 text-right font-normal">Precio hoy</th>
+                <th className="hidden px-4 py-3 text-right font-normal sm:table-cell">Precio hoy</th>
                 <th className="px-4 py-3 text-right font-normal">Equilibrio</th>
-                {p.deficit > 0 && (
-                  <>
-                    <th className="hidden px-4 py-3 text-right font-normal sm:table-cell">
-                      Si todo sube igual
-                    </th>
-                    <th className="hidden px-4 py-3 text-right font-normal sm:table-cell">
-                      Si solo sube este
-                    </th>
-                  </>
-                )}
+                <th className="px-4 py-3 text-right font-normal">Vs. equilibrio</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-border">
-              {p.targets.map((t) => (
-                <tr key={t.symbol}>
-                  <td className="px-4 py-3 font-medium">{t.symbol}</td>
-                  <td className="px-4 py-3 text-right font-mono tabular-nums">
-                    {formatPrice(t.priceEur)}
-                  </td>
-                  <td className="px-4 py-3 text-right font-mono tabular-nums">
-                    {formatPrice(t.breakEvenEur)}
-                    <span
-                      className={`block whitespace-nowrap text-xs ${t.changeToBreakEven > 0 ? "text-loss" : "text-gain"}`}
+              {p.targets.map((t) => {
+                // Sin coste (todo recibido gratis): no hay distancia que medir.
+                const distance = t.breakEvenEur > 0 ? t.priceEur / t.breakEvenEur - 1 : null;
+                const pos = p.positions.find((x) => x.symbol === t.symbol);
+                return (
+                  <tr key={t.symbol}>
+                    <td className="px-4 py-3">
+                      <Link
+                        href={`/activo/${encodeURIComponent(t.symbol)}`}
+                        className="font-medium hover:underline"
+                      >
+                        {t.symbol}
+                      </Link>
+                    </td>
+                    <td className="hidden px-4 py-3 text-right font-mono tabular-nums sm:table-cell">
+                      {formatPrice(t.priceEur)}
+                    </td>
+                    <td className="px-4 py-3 text-right font-mono tabular-nums">
+                      {formatPrice(t.breakEvenEur)}
+                    </td>
+                    <td
+                      className={`px-4 py-3 text-right font-mono tabular-nums ${distance != null ? pnlClass(distance) : ""}`}
                     >
-                      {t.changeToBreakEven > 0
-                        ? `${formatPct(t.changeToBreakEven)} para llegar`
-                        : "ya en positivo"}
-                    </span>
-                  </td>
-                  {p.deficit > 0 && (
-                    <>
-                      <td className="hidden px-4 py-3 text-right font-mono tabular-nums sm:table-cell">
-                        {formatPrice(t.uniformTargetEur)}
-                      </td>
-                      <td className="hidden px-4 py-3 text-right font-mono tabular-nums sm:table-cell">
-                        {t.soloChange > 5 ? (
-                          // Posición demasiado pequeña: el precio necesario no es realista.
-                          <span className="text-muted">—</span>
-                        ) : (
-                          <>
-                            {formatPrice(t.soloTargetEur)}
-                            <span className="block text-xs text-muted">
-                              {formatPct(t.soloChange)}
-                            </span>
-                          </>
-                        )}
-                      </td>
-                    </>
-                  )}
-                </tr>
-              ))}
+                      {distance == null ? (
+                        <span className="text-muted">sin coste</span>
+                      ) : (
+                        <span className="whitespace-nowrap">
+                          {formatPct(distance)}
+                          <span className="hidden sm:inline">
+                            {distance >= 0 ? " por encima" : " por debajo"}
+                          </span>
+                        </span>
+                      )}
+                      {pos && (
+                        <span className="block text-xs">{formatMoneySigned(pos.unrealizedEur)}</span>
+                      )}
+                    </td>
+                  </tr>
+                );
+              })}
             </tbody>
           </table>
         </div>
         <p className="mt-3 text-xs leading-5 text-muted">
-          <strong className="font-medium text-foreground">Equilibrio</strong>: precio al
-          que esa posición ni gana ni pierde (coste FIFO ÷ cantidad).{" "}
-          {p.deficit > 0 && (
-            <>
-              <strong className="font-medium text-foreground">Si todo sube igual</strong>:
-              precio de cada activo cuando la cartera entera vuelve a valer lo que has metido.{" "}
-              <strong className="font-medium text-foreground">Si solo sube este</strong>:
-              precio que tendría que alcanzar ese activo, con el resto quieto, para
-              recuperarlo él solo.{" "}
-            </>
-          )}
-          Son cálculos sobre tus datos, no recomendaciones de inversión.
+          <strong className="font-medium text-foreground">Equilibrio</strong>: el precio al
+          que esa moneda ni gana ni pierde respecto a lo que pagaste por ella (coste FIFO ÷
+          cantidad). Por encima ganas y por debajo pierdes. Son cálculos sobre tus datos, no
+          recomendaciones de inversión.
         </p>
         {p.warnings.length > 0 && (
           <ul className="mt-3 space-y-1 text-xs text-muted">
@@ -326,9 +325,9 @@ export default async function Dashboard() {
               <li key={w.symbol}>
                 ⚠ {w.symbol}:{" "}
                 {w.orphanCostEur >= 5
-                  ? `el historial registra unidades que ya no están en tu saldo; su coste (${formatEur(w.orphanCostEur)}) cuenta como pérdida realizada.`
+                  ? `el historial registra unidades que ya no están en tu saldo; su coste (${formatMoney(w.orphanCostEur)}) cuenta como pérdida realizada.`
                   : w.unmatchedEur >= 5
-                    ? `ventas por ${formatEur(w.unmatchedEur)} sin compra registrada; cuentan como beneficio.`
+                    ? `ventas por ${formatMoney(w.unmatchedEur)} sin compra registrada; cuentan como beneficio.`
                     : `solo el ${formatWeight(w.coverage)} del saldo tiene historial; el resto cuenta a coste 0.`}
               </li>
             ))}
@@ -390,10 +389,10 @@ export default async function Dashboard() {
                     {pos.breakEvenEur != null ? formatPrice(pos.breakEvenEur) : "—"}
                   </td>
                   <td className="px-4 py-3 text-right font-mono tabular-nums">
-                    {formatEur(pos.valueEur)}
+                    {formatMoney(pos.valueEur)}
                   </td>
                   <td className={`px-4 py-3 text-right font-mono tabular-nums ${pnlClass(pos.unrealizedEur)}`}>
-                    {formatEurSigned(pos.unrealizedEur)}
+                    {formatMoneySigned(pos.unrealizedEur)}
                     {pos.costEur > 0 && (
                       <span className="block text-xs">
                         {formatPct(pos.unrealizedEur / pos.costEur)}
@@ -454,7 +453,7 @@ export default async function Dashboard() {
                     {formatAmount(m.amount)}
                   </p>
                   <p className="text-xs text-muted">
-                    {m.valueEur != null ? formatEur(m.valueEur) : "—"}
+                    {m.valueEur != null ? formatMoney(m.valueEur) : "—"}
                   </p>
                 </div>
               </li>
@@ -463,6 +462,35 @@ export default async function Dashboard() {
         </ul>
       </section>
     </main>
+  );
+}
+
+// Lo que vale hoy frente a lo que has metido: la marca es tu punto de equilibrio.
+function BreakEvenBar({ value, invested }: { value: number; invested: number }) {
+  const max = Math.max(value, invested) || 1;
+  return (
+    <div className="mt-4">
+      <div className="relative h-2 rounded-full bg-border">
+        <div
+          className={`absolute inset-y-0 left-0 rounded-full ${value >= invested ? "bg-gain" : "bg-loss"}`}
+          style={{ width: `${(value / max) * 100}%` }}
+        />
+        <div
+          className="absolute -inset-y-1 w-0.5 bg-foreground"
+          style={{ left: `calc(${(invested / max) * 100}% - 1px)` }}
+          aria-hidden
+        />
+      </div>
+      <div className="mt-2 flex justify-between gap-4 text-xs text-muted">
+        <span>
+          Vale hoy <span className="font-mono tabular-nums text-foreground">{formatMoney(value)}</span>
+        </span>
+        <span>
+          Has metido{" "}
+          <span className="font-mono tabular-nums text-foreground">{formatMoney(invested)}</span>
+        </span>
+      </div>
+    </div>
   );
 }
 
