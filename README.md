@@ -1,40 +1,50 @@
 # Crypto Dashboard by Rupgo
 
-Tu propio dashboard privado de inversiones crypto: une tu **cuenta de Coinbase** y tus **wallets** (por dirección pública) y te dice cuánto vale todo, cuánto has metido, qué rentabilidad llevas (total, al año y por moneda), si tus cambios entre monedas te han salido bien, a qué precio tiene que estar cada moneda para volver a positivo y tu informe fiscal por FIFO.
+**Tu propio dashboard de inversiones crypto, privado, gratis y tuyo.** Une tu cuenta de Coinbase y tus wallets en una sola pantalla y responde a lo que de verdad importa:
 
-- **Solo lectura:** nunca puede mover fondos. No pide ni guarda claves privadas ni frases semilla.
-- **Tuyo y privado:** usas tu propio Supabase, tu Vercel y tus claves. Nadie más ve tus datos, ni siquiera quien te pasó este repo.
-- **Coste:** con los planes gratuitos de Supabase, Vercel, Resend y Zerion, 0 €.
+- 💶 **¿Cuánto vale hoy todo lo que tengo** y cuánto he metido? Rentabilidad total, al año (TIR) y variación 24h / 7d / 30d.
+- 📈 **¿Cómo ha evolucionado?** Gráfico día a día desde tu primer movimiento, reconstruido solo.
+- 🪙 **¿Gano o pierdo con cada moneda?** Resultado por moneda, gráfico de precio con tus compras y ventas marcadas y todos sus movimientos.
+- 🔁 **¿Me han salido bien los cambios entre monedas?** Cada cambio comparado con lo que tendrías si no lo hubieras hecho, y cuánto se fue en comisiones.
+- 🎯 **¿A qué precio tiene que estar cada moneda** para volver a positivo?
+- 🧾 **Informe fiscal** por FIFO y por año, con CSV para tu gestor.
+- 🔔 **Alertas por email** de precio y de movimientos en tu wallet.
+- 🙈 Modo privacidad, app instalable en el móvil y tema oscuro.
 
-## Qué necesitas
+> **Solo lectura y privado.** Nunca puede mover fondos, no pide claves privadas ni frases semilla, y cada persona lo instala con **sus propias** cuentas (Supabase, Vercel, Coinbase…). Nadie más ve tus datos, tampoco el autor de este repo.
 
-Cuentas gratuitas en [GitHub](https://github.com), [Vercel](https://vercel.com) (créala con GitHub), [Supabase](https://supabase.com), [Resend](https://resend.com) y [Zerion API](https://zerion.io/api), y tu cuenta de Coinbase.
+---
 
-> Puedes hacerlo todo pidiéndoselo a Claude Code: abre esta carpeta y dile *"sigue el README para instalarlo"*. Nunca le pegues claves en el chat: van directamente en Vercel.
+## 🎓 Hecho por Rubén Benarroch · [rupgo.com](https://rupgo.com)
 
-## Instalación (unos 30 minutos)
+Este proyecto lo construí entero con IA (Claude Code), sin escribir el código a mano. **En [rupgo.com](https://rupgo.com) enseño a crear proyectos reales como este con inteligencia artificial**, desde la idea hasta tenerlo publicado con base de datos, emails, pagos y dominio propio. Si te gusta este dashboard y quieres aprender a crear los tuyos, [échale un vistazo a los cursos](https://rupgo.com).
 
-### 1. Copia el repo
+---
 
-En GitHub pulsa **Fork** (o *Use this template*). Tendrás tu copia en tu cuenta.
+## ✨ Instálalo con tu IA (recomendado)
 
-### 2. Base de datos (Supabase)
+1. Haz **Fork** de este repo en GitHub (botón arriba a la derecha) y clónalo en tu ordenador.
+2. Abre la carpeta con **Claude Code** (u otro asistente de IA) y escríbele:
 
-1. Crea un proyecto nuevo en Supabase (región cercana, por ejemplo `eu-west`).
-2. Ve a **SQL Editor**, pega todo el contenido de [`supabase/schema.sql`](supabase/schema.sql) y pulsa **Run**. Solo una vez.
-3. Ve a **Authentication → Sign In / Providers** y desactiva **Allow new users to sign up** (la app crea tu usuario sola).
-4. Apunta, de **Project Settings → API Keys**: la URL del proyecto, la *publishable key* (`sb_publishable_…`) y la *secret key* (`sb_secret_…`).
+   > *Quiero instalar mi propio Crypto Dashboard. Sigue la guía docs/INSTALAR-CON-IA.md.*
 
-### 3. Claves de tus datos
+3. Te irá guiando paso a paso: crear Supabase, sacar las claves de Coinbase (solo lectura) y Zerion, ponerlas en Vercel y entrar por primera vez. **No le pegues claves en el chat**: van directamente en Vercel.
 
-- **Coinbase:** en [portal.cdp.coinbase.com](https://portal.cdp.coinbase.com) → API Keys → crea una *secret API key* con **solo View (read-only)** marcado (nada de Trade ni Transfer). Marca *Opt-out of IP allowlisting* (Vercel no tiene IPs fijas). Guarda el **API key ID** y el **Secret**: el secreto solo se muestra una vez.
-- **Zerion:** crea una API key en el panel de Zerion. El plan gratuito tiene un cupo de peticiones; la app sincroniza las wallets cada 6 h para no pasarse y muestra el consumo en Ajustes.
-- **Resend:** crea una API key. Para que los emails lleguen a cualquier dirección, verifica tu dominio en Resend; si no tienes dominio, usa `onboarding@resend.dev` como remitente, que solo entrega al email con el que creaste la cuenta de Resend (usa ese mismo email como `ALLOWED_EMAIL`).
+La guía que sigue tu IA está en [`docs/INSTALAR-CON-IA.md`](docs/INSTALAR-CON-IA.md). También la puedes seguir tú a mano.
 
-### 4. Publica en Vercel
+## 🧰 Qué necesitas
 
-1. En Vercel: **Add New → Project** → importa tu fork.
-2. Antes de desplegar, en **Environment Variables** añade las de [`.env.example`](.env.example):
+Cuentas gratuitas en [GitHub](https://github.com), [Vercel](https://vercel.com) (créala con GitHub), [Supabase](https://supabase.com), [Resend](https://resend.com) y [Zerion API](https://zerion.io/api), y tu cuenta de Coinbase. **Coste: 0 €** con los planes gratuitos.
+
+## 🛠️ Instalación a mano (unos 30 minutos)
+
+1. **Copia el repo:** Fork en GitHub.
+2. **Supabase:** crea un proyecto, pega todo [`supabase/schema.sql`](supabase/schema.sql) en **SQL Editor → Run** (una vez) y desactiva **Authentication → Sign In / Providers → Allow new users to sign up**. Apunta la URL, la *publishable key* y la *secret key* (Project Settings → API Keys).
+3. **Claves:**
+   - **Coinbase:** [portal.cdp.coinbase.com](https://portal.cdp.coinbase.com) → API Keys → *secret API key* con **solo View (read-only)** y *Opt-out of IP allowlisting*. Guarda el API key ID y el Secret (solo se muestra una vez).
+   - **Zerion:** una API key (plan gratuito).
+   - **Resend:** una API key. Sin dominio propio, usa `onboarding@resend.dev` como remitente (solo entrega al email de tu cuenta de Resend).
+4. **Vercel:** importa tu fork y, antes de desplegar, crea las variables de [`.env.example`](.env.example) en **Settings → Environment Variables** (las secretas como *Sensitive*):
 
 | Variable | Valor |
 |---|---|
@@ -48,45 +58,40 @@ En GitHub pulsa **Fork** (o *Use this template*). Tendrás tu copia en tu cuenta
 | `COINBASE_API_KEY_NAME` | El *API key ID* de Coinbase |
 | `COINBASE_API_PRIVATE_KEY` | El *Secret* de Coinbase |
 | `ZERION_API_KEY` | Tu key de Zerion |
-| `CRON_SECRET` | Un texto largo aleatorio (por ejemplo, el resultado de `openssl rand -hex 32`) |
+| `CRON_SECRET` | Un texto largo aleatorio (`openssl rand -hex 32`) |
 
-Las claves secretas (Supabase secret, Resend, Coinbase, Zerion, `CRON_SECRET`) márcalas como **Sensitive**.
+5. **Despliega y entra:** abre tu URL, pide el acceso con tu email (llega un enlace y un código), añade tu wallet en **Ajustes** y pulsa **↻**. La primera sincronización importa todo tu historial y reconstruye el gráfico.
 
-3. Pulsa **Deploy**.
+En el móvil puedes instalarla: en Safari, **Compartir → Añadir a pantalla de inicio**. En la app instalada entra con el **código** del email.
 
-### 5. Primer acceso
+## ⏱️ Sincronizar cada hora (opcional, gratis)
 
-1. Abre tu URL de Vercel, escribe tu email y pide el acceso. Te llega un enlace y un código; usa cualquiera de los dos.
-2. Ve a **Ajustes** y añade la dirección pública de tu wallet (`0x…` o de Solana).
-3. Pulsa **Sincronizar** (↻). La primera vez importa todo el historial de Coinbase y la wallet y reconstruye el gráfico día a día desde tu primer movimiento (puede tardar un par de minutos). Después se mantiene solo.
+Vercel sincroniza sola una vez al día y siempre puedes pulsar ↻. Para tener datos cada hora, este repo trae un workflow de GitHub Actions:
 
-En el móvil puedes instalarla: en Safari, **Compartir → Añadir a pantalla de inicio**. En la app instalada entra con el **código** del email (la app y Safari no comparten sesión).
+1. En tu fork: **Actions** → activa los workflows.
+2. **Settings → Secrets and variables → Actions**, crea `SYNC_URL` (`https://TU-DOMINIO/api/cron/sync`; debe ser accesible, por ejemplo tu dominio propio) y `CRON_SECRET` (el mismo que en Vercel).
+3. Pruébalo en **Actions → Sincronización cada hora → Run workflow**.
 
-## Sincronizar cada hora (opcional, gratis)
+## 🔄 Recibe las mejoras
 
-Vercel sincroniza sola una vez al día (06:00 UTC) y siempre puedes pulsar ↻. Si quieres datos cada hora, el repo trae un workflow de GitHub Actions que lo hace gratis:
+Este repo se actualiza con nuevas funciones. Para tenerlas:
 
-1. En tu fork: **Actions** → activa los workflows (en los forks vienen apagados).
-2. **Settings → Secrets and variables → Actions → New repository secret**, crea:
-   - `SYNC_URL`: `https://TU-DOMINIO/api/cron/sync`. Tiene que ser una URL accesible: tu dominio propio, o tu `.vercel.app` si tienes desactivada la Deployment Protection en producción.
-   - `CRON_SECRET`: el mismo valor que pusiste en Vercel.
-3. Listo: se ejecuta a los 5 minutos de cada hora. Puedes probarlo en **Actions → Sincronización cada hora → Run workflow**.
-
-## Actualizar a nuevas versiones
-
-Cuando haya mejoras en este repo:
-
-1. En tu fork de GitHub pulsa **Sync fork → Update branch**. Vercel vuelve a desplegar solo.
+1. En tu fork de GitHub pulsa **Sync fork → Update branch** (o pídeselo a tu IA). Vercel vuelve a desplegar solo.
 2. Si la actualización cambia la base de datos, habrá un archivo nuevo en [`supabase/updates/`](supabase/updates): ejecútalo una vez en Supabase → SQL Editor.
 
-## Cómo calcula
+## 🧮 Cómo calcula
 
 - **Dinero metido** = compras con euros + entradas desde fuera de tus cuentas − ventas a euros − salidas fuera. Lo que mueves entre tu Coinbase y tu wallet no cuenta.
 - **Rentabilidad** = lo que vale hoy − dinero metido. **Al año (TIR)** tiene en cuenta cuándo entró cada euro.
 - **Fiscal:** FIFO por año; las recompensas de staking cuentan a su valor al recibirlas. Es orientativo: valídalo con tu asesor.
-- Si algún movimiento entre redes no se detecta bien (pasa con algunos puentes), se puede corregir a mano: ver `CLAUDE.md`.
 
-## Desarrollo
+## 🔒 Seguridad
+
+- La API key de Coinbase es de **solo lectura** y vive en tus variables de Vercel; solo la usa el servidor.
+- Solo tu email puede entrar (enlace o código de un solo uso, con límite de intentos). La base de datos tiene RLS: nadie más puede leerla.
+- Ninguna clave se guarda en el código. Si ves alguna en un fork, es un error de quien la subió: regénérala.
+
+## 💻 Desarrollo
 
 ```bash
 npm install
@@ -100,4 +105,8 @@ vercel env pull .env.local
 npm run dev
 ```
 
-Stack: Next.js 16, TypeScript, Tailwind CSS v4, Recharts, Supabase, Vercel, Resend. Más detalles para desarrollar con Claude Code en [`CLAUDE.md`](CLAUDE.md).
+Stack: Next.js 16, TypeScript, Tailwind CSS v4, Recharts, Supabase, Vercel, Resend. Si desarrollas con Claude Code, lee [`CLAUDE.md`](CLAUDE.md).
+
+---
+
+¿Te ha servido? Dale una ⭐ al repo y, si quieres aprender a crear proyectos así con IA, te espero en **[rupgo.com](https://rupgo.com)**. — *Rubén Benarroch*
