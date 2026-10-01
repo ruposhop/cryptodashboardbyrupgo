@@ -156,6 +156,19 @@ export async function getPortfolio() {
   // real: incluye lo perdido en comisiones al cambiar de moneda.
   let contributed = 0;
   const cashFlows: { t: number; v: number }[] = [];
+  // De dónde sale "Has metido", para poder cuadrarlo con el banco.
+  const contributedParts = {
+    compras: { count: 0, eur: 0 },
+    entradas: { count: 0, eur: 0 },
+    ventas: { count: 0, eur: 0 },
+    salidas: { count: 0, eur: 0 },
+  };
+  const partOf: Record<string, keyof typeof contributedParts> = {
+    compra: "compras",
+    recepcion: "entradas",
+    venta: "ventas",
+    envio: "salidas",
+  };
   for (const t of txs) {
     if (t.is_internal_transfer || t.type === "interno") continue;
     if (["EUR", "USD"].includes(one(t.assets as Joined<{ symbol: string }>).symbol)) continue;
@@ -166,6 +179,8 @@ export async function getPortfolio() {
     if ((t.type === "venta" || t.type === "envio") && amount < 0) cash = value;
     if (!cash) continue;
     contributed -= cash;
+    contributedParts[partOf[t.type]].count++;
+    contributedParts[partOf[t.type]].eur += Math.abs(cash);
     cashFlows.push({ t: Date.parse(t.occurred_at), v: cash });
   }
 
@@ -257,6 +272,7 @@ export async function getPortfolio() {
       snapshot.data?.invested_eur != null ? Number(snapshot.data.invested_eur) : null,
     pnl,
     contributed,
+    contributedParts,
     fifoPnl,
     irr,
     unrealized,

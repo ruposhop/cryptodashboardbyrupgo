@@ -10,6 +10,7 @@ import {
   pnlClass,
 } from "@/lib/format";
 import { explorerUrl, TYPE_LABEL } from "@/lib/movements";
+import { getCosts } from "@/lib/costs";
 import { getHistory, getPortfolio } from "@/lib/portfolio";
 import { requireOwner } from "@/lib/session";
 import { zerionCallsThisMonth } from "@/lib/sync";
@@ -18,11 +19,13 @@ import { HistoryChart } from "./history-chart";
 
 export default async function Dashboard() {
   await requireOwner();
-  const [p, history, zerionCalls] = await Promise.all([
+  const [p, history, zerionCalls, costs] = await Promise.all([
     getPortfolio(),
     getHistory(),
     zerionCallsThisMonth(),
+    getCosts(),
   ]);
+  const parts = p.contributedParts;
   const pnlPct = p.contributed ? p.pnl / p.contributed : null;
 
   const syncWarning = p.syncFailing
@@ -109,13 +112,88 @@ export default async function Dashboard() {
         </dl>
         <p className="mt-3 text-xs leading-5 text-muted">
           Rentabilidad = lo que vale hoy − lo que has metido (compras con euros y lo que
-          entró de fuera de tus cuentas). Ya descuenta las comisiones de tus
-          cambios. «Al año» es la rentabilidad anual equivalente teniendo en cuenta cuándo
+          entró de fuera de tus cuentas). Ya descuenta todas las comisiones
+          (al comprar, al cambiar de moneda y de la red). «Al año» es la rentabilidad anual equivalente teniendo en cuenta cuándo
           entró cada euro. El cálculo fiscal (FIFO) está en{" "}
           <Link href="/fiscal" className="underline underline-offset-2 hover:text-foreground">
             Fiscal
           </Link>
           .
+        </p>
+      </section>
+
+      <section aria-labelledby="metido" className="mt-10">
+        <h2 id="metido" className="text-sm uppercase tracking-wider text-muted">
+          Dinero metido y comisiones
+        </h2>
+        <div className="mt-3 grid gap-3 sm:grid-cols-2">
+          <div className="rounded-xl border border-border p-4 sm:p-5">
+            <h3 className="text-sm font-medium">De dónde sale «Has metido»</h3>
+            <dl className="mt-3 space-y-2 text-sm">
+              <Line
+                label={`Compras con euros (${parts.compras.count})`}
+                hint="lo que pagaste, comisión incluida"
+                value={formatEur(parts.compras.eur)}
+              />
+              {parts.entradas.count > 0 && (
+                <Line
+                  label={`Entradas de fuera (${parts.entradas.count})`}
+                  hint="a su valor el día que llegaron"
+                  value={formatEur(parts.entradas.eur)}
+                />
+              )}
+              {parts.ventas.count > 0 && (
+                <Line
+                  label={`Ventas a euros (${parts.ventas.count})`}
+                  value={`−${formatEur(parts.ventas.eur)}`}
+                />
+              )}
+              {parts.salidas.count > 0 && (
+                <Line
+                  label={`Salidas fuera de tus cuentas (${parts.salidas.count})`}
+                  value={`−${formatEur(parts.salidas.eur)}`}
+                />
+              )}
+              <Line label="Has metido" value={formatEur(p.contributed)} total />
+            </dl>
+          </div>
+
+          <div className="rounded-xl border border-border p-4 sm:p-5">
+            <h3 className="text-sm font-medium">Lo que te han costado las comisiones</h3>
+            <dl className="mt-3 space-y-2 text-sm">
+              <Line
+                label={`Comisión de compra (${costs.buys})`}
+                hint="la que declara Coinbase"
+                value={formatEur(costs.buyFees)}
+              />
+              {costs.buyMargin != null && (
+                <Line
+                  label="Margen en el precio de compra"
+                  hint={`estimado con el cierre de cada día${costs.buyMarginCoverage < 0.99 ? `, sobre el ${formatWeight(costs.buyMarginCoverage)} de las compras` : ""}`}
+                  value={`≈ ${formatEur(costs.buyMargin)}`}
+                />
+              )}
+              <Line
+                label={`Cambios entre monedas (${costs.swaps})`}
+                hint="comisión y diferencia de precio"
+                value={formatEur(costs.swapCosts)}
+                href="/cambios"
+              />
+              {costs.gas >= 0.01 && (
+                <Line label="Gas de la red (wallet)" value={formatEur(costs.gas)} />
+              )}
+              <Line
+                label="Total"
+                hint={p.contributed ? `${formatWeight(costs.total / p.contributed)} de lo metido` : undefined}
+                value={`≈ ${formatEur(costs.total)}`}
+                total
+              />
+            </dl>
+          </div>
+        </div>
+        <p className="mt-3 text-xs leading-5 text-muted">
+          Las comisiones ya están restadas en la rentabilidad: aquí solo se separan para
+          ver cuánto se ha ido en costes y no en el mercado.
         </p>
       </section>
 
@@ -385,6 +463,38 @@ export default async function Dashboard() {
         </ul>
       </section>
     </main>
+  );
+}
+
+function Line({
+  label,
+  hint,
+  value,
+  href,
+  total,
+}: {
+  label: string;
+  hint?: string;
+  value: string;
+  href?: string;
+  total?: boolean;
+}) {
+  return (
+    <div
+      className={`flex items-baseline justify-between gap-4 ${total ? "border-t border-border pt-2 font-medium" : ""}`}
+    >
+      <dt className="min-w-0">
+        {href ? (
+          <Link href={href} className="underline-offset-2 hover:underline">
+            {label}
+          </Link>
+        ) : (
+          label
+        )}
+        {hint && <span className="block text-xs font-normal text-muted">{hint}</span>}
+      </dt>
+      <dd className="shrink-0 font-mono tabular-nums">{value}</dd>
+    </div>
   );
 }
 
