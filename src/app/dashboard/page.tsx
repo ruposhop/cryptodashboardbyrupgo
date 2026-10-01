@@ -10,6 +10,7 @@ import {
   currencyName,
   getDisplayCurrency,
   pnlClass,
+  todayIso,
 } from "@/lib/format";
 import { explorerUrl, TYPE_LABEL } from "@/lib/movements";
 import { getCosts } from "@/lib/costs";
@@ -38,7 +39,7 @@ export default async function Dashboard() {
 
   // Variación del mercado (MASTERPLAN §3.4): cambio del P&L desde hace N días,
   // así una compra nueva no cuenta como "subida".
-  const today = new Date().toLocaleDateString("sv-SE", { timeZone: "Europe/Madrid" });
+  const today = todayIso();
   const variations = [
     { label: "24h", days: 1 },
     { label: "7d", days: 7 },

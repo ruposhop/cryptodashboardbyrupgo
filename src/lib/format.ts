@@ -9,6 +9,22 @@ export function setCurrency(code: string) {
 }
 export const getDisplayCurrency = () => currency;
 
+// Zona horaria para mostrar fechas (Ajustes; por defecto, Madrid).
+export const DEFAULT_TIME_ZONE = "Europe/Madrid";
+let timeZone = DEFAULT_TIME_ZONE;
+export function setTimeZone(zone: string) {
+  timeZone = zone;
+}
+export const getDisplayTimeZone = () => timeZone;
+export const isValidTimeZone = (zone: string) => {
+  try {
+    new Intl.DateTimeFormat("es-ES", { timeZone: zone });
+    return true;
+  } catch {
+    return false;
+  }
+};
+
 function money(options: Intl.NumberFormatOptions = {}) {
   const key = `${currency}|${JSON.stringify(options)}`;
   let f = cache.get(key);
@@ -75,8 +91,14 @@ export const formatDate = (iso: string) =>
   new Intl.DateTimeFormat("es-ES", {
     dateStyle: "medium",
     timeStyle: "short",
-    timeZone: "Europe/Madrid",
+    timeZone,
   }).format(new Date(iso));
+
+export const formatDay = (iso: string) =>
+  new Intl.DateTimeFormat("es-ES", { dateStyle: "medium", timeZone }).format(new Date(iso));
+
+// Fecha de hoy (AAAA-MM-DD) en tu zona horaria.
+export const todayIso = () => new Date().toLocaleDateString("sv-SE", { timeZone });
 
 // Verde y rojo solo para P&L (CLAUDE.md).
 export const pnlClass = (n: number) =>

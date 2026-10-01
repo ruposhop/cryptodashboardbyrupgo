@@ -10,6 +10,7 @@ import {
   formatPct,
   formatPrice,
   getDisplayCurrency,
+  getDisplayTimeZone,
   pnlClass,
 } from "@/lib/format";
 import { explorerUrl } from "@/lib/movements";
@@ -198,6 +199,7 @@ export default async function Activo({ params }: PageProps<"/activo/[symbol]">) 
         <div className="mt-3">
           <Operations
             currency={getDisplayCurrency()}
+            timeZone={getDisplayTimeZone()}
             operations={a.operations.map((o) => ({
               id: o.id,
               occurredAt: o.occurredAt,

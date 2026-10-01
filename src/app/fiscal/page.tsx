@@ -4,13 +4,13 @@ import { bySymbol, getFiscalYears } from "@/lib/fiscal";
 import {
   formatAmount,
   formatMoney,
+  formatDay,
   formatMoneySigned,
   pnlClass,
 } from "@/lib/format";
 import { requireOwner } from "@/lib/session";
 
 const TYPE_LABEL: Record<string, string> = { venta: "Venta", swap: "Permuta" };
-const day = new Intl.DateTimeFormat("es-ES", { dateStyle: "medium" });
 
 export default async function Fiscal({ searchParams }: PageProps<"/fiscal">) {
   await requireOwner();
@@ -172,7 +172,7 @@ export default async function Fiscal({ searchParams }: PageProps<"/fiscal">) {
                   {selected.disposals.map((d, i) => (
                     <tr key={i}>
                       <td className="whitespace-nowrap px-4 py-3 text-muted">
-                        {day.format(new Date(d.occurredAt))}
+                        {formatDay(d.occurredAt)}
                       </td>
                       <td className="px-4 py-3">
                         <span className="font-medium">{d.symbol}</span>
