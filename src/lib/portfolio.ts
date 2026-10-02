@@ -1,6 +1,7 @@
 import "server-only";
 import { computeFifo, FIAT, underlying, type FifoAsset } from "@/lib/fifo";
 import { createClient } from "@/lib/supabase/server";
+import { computeContributions } from "@/lib/fund";
 import { xirr } from "@/lib/xirr";
 
 type Origin = "Coinbase" | "Wallet";
@@ -154,35 +155,20 @@ export async function getPortfolio() {
   // Visión de fondo: dinero metido neto (compras y entradas externas, menos
   // ventas y salidas externas) frente a lo que vale hoy. Es la rentabilidad
   // real: incluye lo perdido en comisiones al cambiar de moneda.
-  let contributed = 0;
-  const cashFlows: { t: number; v: number }[] = [];
-  // De dónde sale "Has metido", para poder cuadrarlo con el banco.
-  const contributedParts = {
-    compras: { count: 0, eur: 0 },
-    entradas: { count: 0, eur: 0 },
-    ventas: { count: 0, eur: 0 },
-    salidas: { count: 0, eur: 0 },
-  };
-  const partOf: Record<string, keyof typeof contributedParts> = {
-    compra: "compras",
-    recepcion: "entradas",
-    venta: "ventas",
-    envio: "salidas",
-  };
-  for (const t of txs) {
-    if (t.is_internal_transfer || t.type === "interno") continue;
-    if (FIAT.has(one(t.assets as Joined<{ symbol: string }>).symbol)) continue;
-    const value = Number(t.value_eur_at_time ?? 0);
-    const amount = Number(t.amount);
-    let cash = 0;
-    if ((t.type === "compra" || t.type === "recepcion") && amount > 0) cash = -value;
-    if ((t.type === "venta" || t.type === "envio") && amount < 0) cash = value;
-    if (!cash) continue;
-    contributed -= cash;
-    contributedParts[partOf[t.type]].count++;
-    contributedParts[partOf[t.type]].eur += Math.abs(cash);
-    cashFlows.push({ t: Date.parse(t.occurred_at), v: cash });
-  }
+  const {
+    contributed,
+    parts: contributedParts,
+    cashFlows,
+  } = computeContributions(
+    txs.map((t) => ({
+      type: t.type,
+      amount: Number(t.amount),
+      value: t.value_eur_at_time != null ? Number(t.value_eur_at_time) : null,
+      occurredAt: t.occurred_at,
+      internal: t.is_internal_transfer,
+      fiat: FIAT.has(one(t.assets as Joined<{ symbol: string }>).symbol),
+    })),
+  );
 
   // Resultado total por moneda, contado como dinero que entra y sale:
   // lo que sacaste + lo que vale lo que te queda − lo que metiste. Las
