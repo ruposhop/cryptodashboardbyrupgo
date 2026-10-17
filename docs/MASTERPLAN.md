@@ -36,7 +36,7 @@ Una persona por instalación, que acumula a largo plazo como un fondo personal: 
 - **Movimientos:** lista unificada con filtros y enlace al explorador de bloques. Las transferencias entre tus propias cuentas se detectan y no cuentan como compra ni venta.
 - **Fiscal:** ganancias y pérdidas por FIFO por año (ventas y permutas), recompensas aparte, CSV. Orientativo: validar con un asesor.
 - **Alertas por email:** precio objetivo por moneda, movimientos nuevos en la wallet y fallos de la sincronización (como mucho uno al día). El dashboard avisa si la última sincronización falló o hace más de un día que no hay datos.
-- **Ajustes:** direcciones de wallet, estado de las conexiones, alertas activas.
+- **Ajustes:** direcciones de wallet, estado de las conexiones, alertas activas, moneda de la instalación y zona horaria de las fechas (por defecto Madrid; propone la del dispositivo).
 - **Modo privacidad** y app instalable en el móvil.
 
 ## 4. Criterios de cálculo

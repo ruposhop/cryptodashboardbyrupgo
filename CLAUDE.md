@@ -23,6 +23,7 @@ Si existe `CLAUDE.local.md` (no se sube a GitHub), tiene las notas privadas de e
 - `npm run dev` — servidor de desarrollo (http://localhost:3000)
 - `npm run build` — build de producción (pásalo antes de dar por buena una tarea grande)
 - `npm run lint` — ESLint
+- `npm test` — tests de los cálculos (FIFO, TIR, dinero metido, comisiones) en `tests/`, con `node:test`. Pásalo siempre que toques `src/lib/fifo.ts`, `xirr.ts` o `fund.ts`, y añade un test por cada error de cálculo que se corrija
 
 ## Estructura
 
@@ -33,6 +34,7 @@ Si existe `CLAUDE.local.md` (no se sube a GitHub), tiene las notas privadas de e
 - `src/lib/app-config.ts` — nombre de la app y remitente (variables de entorno)
 - `src/lib/owner.ts` — copia `ALLOWED_EMAIL` a `app_settings`; las políticas RLS usan `is_owner()`
 - `src/lib/fifo.ts` — motor FIFO (función pura). cbBTC/WBTC/ETH2 cuentan como BTC/ETH
+- `src/lib/fund.ts` — dinero metido y comisiones (funciones puras, con tests)
 - `src/lib/portfolio.ts` — rentabilidad del fondo, posiciones y resultado por moneda
 - `src/lib/strategy.ts` — análisis de cambios entre monedas (cada cambio vs no haberlo hecho)
 - `src/lib/sync/` — sincronización (Coinbase cada vez que corre el cron, wallet vía Zerion cada 6 h), alertas (`src/lib/alerts.ts`) e histórico (`src/lib/history.ts`)

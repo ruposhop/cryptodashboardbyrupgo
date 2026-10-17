@@ -1,6 +1,7 @@
 import "server-only";
 import { FIAT, getCurrency } from "@/lib/currency";
 import { underlying } from "@/lib/fifo";
+import { buyFees, buyMargin, swapCosts, uniqueBuys } from "@/lib/fund";
 import { createClient } from "@/lib/supabase/server";
 
 // Lo que te han costado las comisiones (MASTERPLAN §3). Todo ya está dentro
@@ -60,26 +61,25 @@ export async function getCosts(): Promise<Costs> {
   ]);
   for (const r of [buysRes, swapsRes, gasRes, adjustRes]) if (r.error) throw r.error;
 
-  // 1. Compras: una por pedido (las pagadas con el saldo en euros tienen
-  // además una pata en EUR, que se ignora).
-  const seen = new Set<string>();
-  const buys = (buysRes.data ?? [])
-    .map((b) => ({
-      symbol: underlying(one(b.assets as Joined<{ symbol: string }>).symbol),
-      amount: Number(b.amount),
-      date: (b.occurred_at as string).slice(0, 10),
-      id: b.buy_id as string | null,
-      total: Number(b.total),
-      subtotal: Number(b.subtotal),
-      currency: b.currency as string | null,
-    }))
-    .filter((b) => {
-      if (FIAT.has(b.symbol) || b.currency !== currency || !b.total || !b.subtotal) return false;
-      if (b.id && seen.has(b.id)) return false;
-      if (b.id) seen.add(b.id);
-      return true;
-    });
-  const buyFees = buys.reduce((s, b) => s + Math.max(0, b.total - b.subtotal), 0);
+  // 1. Compras: una por pedido (las pagadas con el saldo en efectivo tienen
+  // además una pata en EUR/USD, que se ignora).
+  const buys = uniqueBuys(
+    (buysRes.data ?? []).map((b) => {
+      const symbol = underlying(one(b.assets as Joined<{ symbol: string }>).symbol);
+      return {
+        id: b.buy_id as string | null,
+        symbol,
+        fiat: FIAT.has(symbol),
+        amount: Number(b.amount),
+        date: (b.occurred_at as string).slice(0, 10),
+        total: Number(b.total),
+        subtotal: Number(b.subtotal),
+        currency: b.currency as string | null,
+      };
+    }),
+    currency,
+  );
+  const fees = buyFees(buys);
 
   // Gas: una vez por transacción, salvo en lo que recibiste.
   const gasSeen = new Set<string>();
@@ -116,53 +116,35 @@ export async function getCosts(): Promise<Costs> {
       if (data.length < 1000) break;
     }
   }
-  let margin = 0;
-  let pricedSubtotal = 0;
-  for (const b of buys) {
-    const price = prices.get(`${b.symbol}|${b.date}`);
-    if (!price) continue;
-    margin += b.subtotal - b.amount * price;
-    pricedSubtotal += b.subtotal;
-  }
-  const allSubtotal = buys.reduce((s, b) => s + b.subtotal, 0);
+  const margin = buyMargin(buys, (symbol, date) => prices.get(`${symbol}|${date}`));
   const rebates = (adjustRes.data ?? []).reduce(
     (s, a) => s + Number(a.value_eur_at_time ?? 0),
     0,
   );
 
   // 3. Cambios entre monedas, emparejando las dos patas de cada uno.
-  const legs = new Map<string, { gave: number; got: number; out: boolean; in: boolean }>();
-  for (const t of swapsRes.data ?? []) {
-    const key = (t.trade_id as string | null) ?? (t.pair as string | null) ?? t.tx_hash;
-    if (!key) continue;
-    const l = legs.get(key) ?? { gave: 0, got: 0, out: false, in: false };
-    const value = Number(t.value_eur_at_time ?? 0);
-    if (Number(t.amount) < 0) {
-      l.gave += value;
-      l.out = true;
-    } else {
-      l.got += value;
-      l.in = true;
-    }
-    legs.set(key, l);
-  }
-  const complete = [...legs.values()].filter((l) => l.out && l.in);
-  const swapCosts = complete.reduce((s, l) => s + (l.gave - l.got), 0);
+  const swaps = swapCosts(
+    (swapsRes.data ?? []).map((t) => ({
+      key: (t.trade_id as string | null) ?? (t.pair as string | null) ?? t.tx_hash,
+      amount: Number(t.amount),
+      value: t.value_eur_at_time != null ? Number(t.value_eur_at_time) : null,
+    })),
+  );
 
   const gas = gasTxs.reduce(
     (s, g) => s + (g.value ?? g.qty * (prices.get(`${g.symbol}|${g.date}`) ?? 0)),
     0,
   );
 
-  const buyMargin = pricedSubtotal ? margin - rebates : null;
+  const marginNet = margin.priced ? margin.margin - rebates : null;
   return {
-    buyFees,
+    buyFees: fees,
     buys: buys.length,
-    buyMargin,
-    buyMarginCoverage: allSubtotal ? pricedSubtotal / allSubtotal : 0,
-    swapCosts,
-    swaps: complete.length,
+    buyMargin: marginNet,
+    buyMarginCoverage: margin.coverage,
+    swapCosts: swaps.cost,
+    swaps: swaps.count,
     gas,
-    total: buyFees + Math.max(0, buyMargin ?? 0) + swapCosts + gas,
+    total: fees + Math.max(0, marginNet ?? 0) + swaps.cost + gas,
   };
 }

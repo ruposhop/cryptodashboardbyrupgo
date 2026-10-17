@@ -3,13 +3,13 @@ import { AppHeader } from "@/components/app-header";
 import {
   formatAmount,
   formatMoney,
+  formatDay,
   formatMoneySigned,
   pnlClass,
 } from "@/lib/format";
 import { requireOwner } from "@/lib/session";
 import { getStrategy } from "@/lib/strategy";
 
-const day = new Intl.DateTimeFormat("es-ES", { dateStyle: "medium", timeZone: "Europe/Madrid" });
 
 // ¿Me han salido bien los cambios entre monedas?
 export default async function Cambios() {
@@ -94,7 +94,7 @@ export default async function Cambios() {
                     {w.got.symbol}
                   </Link>
                   <span className="ml-2 text-xs text-muted">
-                    {day.format(new Date(w.occurredAt))} · {w.origin}
+                    {formatDay(w.occurredAt)} · {w.origin}
                   </span>
                 </p>
                 {w.verdict != null && (

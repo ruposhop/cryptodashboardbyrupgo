@@ -1,7 +1,14 @@
 "use client";
 
 import { useState } from "react";
-import { formatAmount, formatMoney, formatPrice, setCurrency } from "@/lib/format";
+import {
+  formatAmount,
+  formatDate,
+  formatMoney,
+  formatPrice,
+  setCurrency,
+  setTimeZone,
+} from "@/lib/format";
 
 export type Operation = {
   id: string;
@@ -44,21 +51,19 @@ const FILTERS = [
 ] as const;
 
 const PAGE = 50;
-const dateTime = new Intl.DateTimeFormat("es-ES", {
-  dateStyle: "medium",
-  timeStyle: "short",
-  timeZone: "Europe/Madrid",
-});
 
 // Todos los movimientos de una moneda, filtrables y paginados en el navegador.
 export function Operations({
   operations,
   currency,
+  timeZone,
 }: {
   operations: Operation[];
   currency: string;
+  timeZone: string;
 }) {
   setCurrency(currency);
+  setTimeZone(timeZone);
   const [filter, setFilter] = useState<(typeof FILTERS)[number]["key"]>("todas");
   const [shown, setShown] = useState(PAGE);
 
@@ -113,7 +118,7 @@ export function Operations({
             {list.slice(0, shown).map((o) => (
               <tr key={o.id}>
                 <td className="whitespace-nowrap px-4 py-3 text-muted">
-                  {dateTime.format(new Date(o.occurredAt))}
+                  {formatDate(o.occurredAt)}
                 </td>
                 <td className="px-4 py-3">
                   {LABEL[o.type] ?? o.type}

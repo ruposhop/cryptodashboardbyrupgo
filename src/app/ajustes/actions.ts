@@ -1,6 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { saveTimeZone } from "@/lib/currency";
 import { requireOwner } from "@/lib/session";
 import { createAdminClient } from "@/lib/supabase/admin";
 
@@ -58,4 +59,18 @@ export async function setWalletActive(formData: FormData) {
     .eq("type", "wallet")
     .ilike("address", address);
   revalidatePath("/ajustes");
+}
+
+export type PrefsState = { message: string; error?: boolean } | null;
+
+export async function updateTimeZone(_prev: PrefsState, formData: FormData): Promise<PrefsState> {
+  await requireOwner();
+  const zone = String(formData.get("timeZone") ?? "").trim();
+  try {
+    await saveTimeZone(zone);
+  } catch {
+    return { message: "Esa zona horaria no es válida.", error: true };
+  }
+  revalidatePath("/", "layout");
+  return { message: `Zona horaria guardada: ${zone}.` };
 }

@@ -1,11 +1,12 @@
 import Link from "next/link";
 import { AppHeader } from "@/components/app-header";
-import { formatDate, formatPrice } from "@/lib/format";
+import { formatDate, formatPrice, getDisplayCurrency, getDisplayTimeZone } from "@/lib/format";
 import { requireOwner } from "@/lib/session";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { zerionCallsThisMonth } from "@/lib/sync";
 import { setWalletActive } from "./actions";
 import { AddWalletForm } from "./add-wallet-form";
+import { TimeZoneForm } from "./time-zone-form";
 
 type Source = {
   id: string;
@@ -86,6 +87,24 @@ export default async function Ajustes() {
             every="cada 6 h"
           />
         </ul>
+      </section>
+
+      <section aria-labelledby="preferencias" className="mt-10">
+        <h2 id="preferencias" className="text-sm uppercase tracking-wider text-muted">
+          Preferencias
+        </h2>
+        <div className="mt-3 space-y-5 rounded-xl border border-border p-4 sm:p-5">
+          <div>
+            <p className="text-sm text-muted">Moneda</p>
+            <p className="mt-1 font-mono">{getDisplayCurrency()}</p>
+            <p className="mt-1 text-xs leading-5 text-muted">
+              La de tu cuenta de Coinbase, detectada en la primera sincronización. Para
+              forzar otra, usa la variable <code>CURRENCY</code> en Vercel antes de
+              sincronizar: cambiarla después obliga a volver a importar el historial.
+            </p>
+          </div>
+          <TimeZoneForm current={getDisplayTimeZone()} zones={Intl.supportedValuesOf("timeZone")} />
+        </div>
       </section>
 
       <section aria-labelledby="wallets" className="mt-10">

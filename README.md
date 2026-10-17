@@ -12,7 +12,7 @@
 - 🎯 **Am I above or below my break-even?** For the whole portfolio and for each coin: how far it could fall before you lose money, or how much it needs to rise.
 - 🧾 **Tax report** using FIFO, per year, with a CSV for your accountant.
 - 🔔 **Email alerts** for price targets, new wallet transactions and failed syncs.
-- 🙈 Privacy mode, installable as a phone app, dark theme.
+- 🙈 Privacy mode, installable as a phone app, dark theme, and your own time zone (in Settings).
 
 > **Read-only and private.** It can never move funds, it never asks for private keys or seed phrases, and everyone installs it with **their own** accounts (Supabase, Vercel, Coinbase…). Nobody else sees your data, not even the author of this repo.
 

@@ -12,7 +12,7 @@
 - 🎯 **¿Estoy por encima o por debajo de mi punto de equilibrio?** En el fondo entero y en cada moneda, con cuánto podría caer sin perder dinero o cuánto tiene que subir.
 - 🧾 **Informe fiscal** por FIFO y por año, con CSV para tu gestor.
 - 🔔 **Alertas por email** de precio, de movimientos en tu wallet y si la sincronización falla.
-- 🙈 Modo privacidad, app instalable en el móvil y tema oscuro.
+- 🙈 Modo privacidad, app instalable en el móvil, tema oscuro y tu zona horaria (en Ajustes).
 
 > **Solo lectura y privado.** Nunca puede mover fondos, no pide claves privadas ni frases semilla, y cada persona lo instala con **sus propias** cuentas (Supabase, Vercel, Coinbase…). Nadie más ve tus datos, tampoco el autor de este repo.
 
